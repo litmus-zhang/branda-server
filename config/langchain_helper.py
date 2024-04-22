@@ -20,7 +20,7 @@ def generate_brand_name(industry: str, niche: str):
 
 
 def generate_brand_messaging(industry: str, niche: str):
-    llm = gai(temperature=1.2, model="gemini-pro", google_api_key=os.getenv('GOOGLE_AI_API_KEY'))
+    llm = gai(temperature=0.8, model="gemini-pro", google_api_key=os.getenv('GOOGLE_AI_API_KEY'))
     prompt_template_name = PromptTemplate(
         template="I have a business with the niche being {niche}, and I want a cool brand messaging for it, it is operating in the {industry} industry.suggest me 3 short but fancy brand messaging for my company",
         input_variables = ["industry", "niche"],
