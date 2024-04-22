@@ -54,7 +54,6 @@ def generate_pattern(industry: str):
     response = DallEAPIWrapper(
 model="dall-e-3",
         quality="standard",
-        n=3
         ).run(name_chain.run({"industry": industry}))
     ans = response.split("\n")
     return ans
@@ -67,7 +66,6 @@ def generate_pics(industry: str):
     )
     name_chain = LLMChain(llm=llm, prompt=prompt_template_name)
     response = DallEAPIWrapper(
-        n=3,
 model="dall-e-3",
         quality="standard",
                         ).run(name_chain.run({"industry": industry}))
