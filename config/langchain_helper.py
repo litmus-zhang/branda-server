@@ -1,4 +1,4 @@
-from langchain_community.llms import vertexai as v1, openai
+from langchain_community.llms import openai
 from langchain.chains import LLMChain
 from langchain_google_genai import ChatGoogleGenerativeAI as gai
 from langchain.prompts import PromptTemplate

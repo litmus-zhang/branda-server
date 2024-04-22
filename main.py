@@ -1,16 +1,43 @@
-from fastapi import Body, FastAPI, HTTPException
+from fastapi import Body, FastAPI, HTTPException, Depends, Query
 import requests
 from restcountries import RestCountryApiV2 as rapi
 import os
+from typing import Annotated, Optional, Union
 from dotenv import load_dotenv
 import config.langchain_helper as lch
+from contextlib import asynccontextmanager
+from config.config import engine, metadata, database
+from fastapi.security import OAuth2PasswordBearer
 
-from models.business_details import BusinessDetails
+from models.schemas import BusinessDetails
 
 load_dotenv()
 
-app = FastAPI()
 
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Load the database models and create tables
+    metadata.create_all(engine)
+    await database.connect()
+    yield
+    # Clean up the database and release the resources
+    await database.disconnect()
+
+
+app = FastAPI(lifespan=lifespan)
+
+# add orm and database setup [DONE]
+# add google login
+
+# add api versioning
+
+# deploy the application to live
+
+@app.get('/items')
+async def get_items(token: Annotated[str, Depends(oauth2_scheme)]):
+    return {"token": token}
 
 
 @app.post("/business-details")
@@ -76,13 +103,16 @@ def create_illustration():
     return {"response" : response}
 
 
-@app.get("/all-countries")
-def get_all_countries():
+@app.get("/all-countries/")
+def get_all_countries(country_name: Annotated[str | None, Query(max_length=50)] = None ):
     all = rapi.get_all()
     countries = {}
     for country in all:
-        countries[country.name] = {
-            "name": country.name,
-            "flag": country.flag
-        }
-    return countries
+            countries[country.name] = {
+                "name": country.name,
+                "flag": country.flag
+            }
+    if country_name:
+        return countries[country_name]
+    else:
+        return countries

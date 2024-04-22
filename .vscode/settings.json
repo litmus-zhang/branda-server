@@ -1,0 +1,13 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 8001,
+            "driver": "PostgreSQL",
+            "name": "branda",
+            "database": "branda",
+            "username": "branda"
+        }
+    ]
+}
