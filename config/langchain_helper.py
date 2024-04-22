@@ -4,6 +4,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI as gai
 from langchain.prompts import PromptTemplate
 from langchain_community.utilities.dalle_image_generator import DallEAPIWrapper
 import os
+import re
 
 
 def generate_brand_name(industry: str, niche: str):
@@ -16,7 +17,9 @@ def generate_brand_name(industry: str, niche: str):
     name_chain = LLMChain(llm=llm, prompt= prompt_template_name, output_key="brand name")
     response = name_chain({"industry": industry, "niche": niche})
 
-    return response['brand name'].split('\n')
+
+    final_res = response['brand name'].split('\n')
+    return [re.sub(r'[^a-zA-Z ]', '', i) for i in final_res if i != '']
 
 
 def generate_brand_messaging(industry: str, niche: str):
@@ -29,7 +32,21 @@ def generate_brand_messaging(industry: str, niche: str):
     name_chain = LLMChain(llm=llm, prompt= prompt_template_name, output_key="brand messaging")
     response = name_chain({"industry": industry, "niche": niche})
 
-    return response['brand messaging'].split('\n')
+    final_res = response['brand messaging'].split('\n')
+    return [re.sub(r'[^a-zA-Z ]', '', i) for i in final_res if i != '']
+
+def generate_business_strategy(industry: str, niche: str, country: str = "Nigeria"):
+    llm = gai(temperature=0.8, model="gemini-pro", google_api_key=os.getenv('GOOGLE_AI_API_KEY'))
+    prompt_template_name = PromptTemplate(
+        template="I have a business with the niche being {niche}, and I want a superb brand strategy for it, it is operating in the {industry} industry.Give me a well detailed business strategy for a company operating in {industry} for {niche} living in {country}, using the Odyssey 3.14 approach of Value Architecture, Value Proposition and Profit Equation",
+        input_variables = ["industry", "niche", "country"],
+    )
+
+    name_chain = LLMChain(llm=llm, prompt= prompt_template_name, output_key="brand strategy")
+    response = name_chain({"industry": industry, "niche": niche, "country": country})
+
+    return response['brand strategy']
+
 
 def generate_logo(industry: str, niche: str):
     llm = openai.OpenAI(temperature=0.8, api_key=os.getenv("OPENAI_API_KEY"))

@@ -62,6 +62,11 @@ def create_brand_messaging():
     response = lch.generate_brand_messaging("Finance", "Targeting middle class citizens")
     return {"response" : response}
 
+@app.get("/strategy")
+def create_brand_messaging():
+    response = lch.generate_business_strategy("Finance", "Targeting middle class citizens", "Nigeria")
+    return {"response" : response}
+
 @app.get("/brand_name")
 def generate_brand_name():
     response = lch.generate_brand_name("Finance", "Targeting middle class citizens")
