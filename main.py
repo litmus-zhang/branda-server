@@ -2,31 +2,17 @@ from fastapi import Body, FastAPI, HTTPException, Depends, Query
 import requests
 from restcountries import RestCountryApiV2 as rapi
 import os
-from typing import Annotated, Optional, Union
+from typing import Annotated
 from dotenv import load_dotenv
 import config.langchain_helper as lch
-from contextlib import asynccontextmanager
-from config.config import engine, metadata, database
-from fastapi.security import OAuth2PasswordBearer
 
 from models.schemas import BusinessDetails
 
 load_dotenv()
 
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="token")
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    # Load the database models and create tables
-    metadata.create_all(engine)
-    await database.connect()
-    yield
-    # Clean up the database and release the resources
-    await database.disconnect()
-
-
-app = FastAPI(lifespan=lifespan)
+app = FastAPI()
 
 # add orm and database setup [DONE]
 # add google login
@@ -34,10 +20,6 @@ app = FastAPI(lifespan=lifespan)
 # add api versioning
 
 # deploy the application to live
-
-@app.get('/items')
-async def get_items(token: Annotated[str, Depends(oauth2_scheme)]):
-    return {"token": token}
 
 
 @app.post("/business-details")

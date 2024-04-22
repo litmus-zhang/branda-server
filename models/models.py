@@ -1,7 +1,4 @@
-from pydantic import BaseModel
-from config.config import Base
-from datetime import date, time
-from sqlalchemy import MetaData, Column, Integer, String, ForeignKey,Table
+from sqlalchemy import Column, Integer, String, ForeignKey,Table
 from sqlalchemy.orm import relationship
 from config.config import metadata
 
