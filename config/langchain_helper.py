@@ -29,7 +29,7 @@ def generate_brand_messaging(industry: str, niche: str):
     name_chain = LLMChain(llm=llm, prompt= prompt_template_name, output_key="brand messaging")
     response = name_chain({"industry": industry, "niche": niche})
 
-    return response.split('\n')
+    return response['brand messaging'].split('\n')
 
 def generate_logo(industry: str, niche: str):
     llm = openai.OpenAI(temperature=0.8, api_key=os.getenv("OPENAI_API_KEY"))
