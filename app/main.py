@@ -4,7 +4,7 @@ from restcountries import RestCountryApiV2 as rapi
 import os
 from typing import Annotated
 from dotenv import load_dotenv
-import config.langchain_helper as lch
+from config import langchain_helper as lch
 
 from models.schemas import BusinessDetails
 
