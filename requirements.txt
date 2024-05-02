@@ -48,6 +48,7 @@ langchain-google-genai==1.0.2
 langchain-google-vertexai==1.0.1
 langchain-text-splitters==0.0.1
 langsmith==0.1.47
+Markdown==3.6
 marshmallow==3.21.1
 multidict==6.0.5
 mypy-extensions==1.0.0
