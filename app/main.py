@@ -1,4 +1,4 @@
-from fastapi import Body, FastAPI, HTTPException, Depends, Query
+from fastapi import FastAPI, Query
 import requests
 from restcountries import RestCountryApiV2 as rapi
 import os
@@ -6,7 +6,6 @@ from typing import Annotated
 from dotenv import load_dotenv
 from config import langchain_helper as lch
 from models.schemas import Strategy, Base
-from models.schemas import BusinessDetails
 import random
 
 
@@ -16,17 +15,6 @@ load_dotenv()
 
 app = FastAPI()
 
-
-@app.post("/business-details")
-async def create_business_details(business_details: BusinessDetails):
-    business_details.country = business_details.country
-    business_details_dict = {
-        "niche": business_details.niche,
-        "description": business_details.description,
-        "target_audience": business_details.target_audience,
-        "country": business_details.country
-    }
-    return business_details_dict
 
 @app.get("/font")
 async def create_font():
