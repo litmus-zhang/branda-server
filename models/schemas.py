@@ -1,5 +1,13 @@
 from pydantic import BaseModel
 
+class Strategy(BaseModel):
+    industry: str
+    niche: str
+    country: str
+
+class Base(BaseModel):
+    industry: str
+    niche: str
 class BusinessDetails(BaseModel):
     niche: str
     description: str

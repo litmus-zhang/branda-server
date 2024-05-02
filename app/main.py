@@ -5,21 +5,16 @@ import os
 from typing import Annotated
 from dotenv import load_dotenv
 from config import langchain_helper as lch
-
+from models.schemas import Strategy, Base
 from models.schemas import BusinessDetails
+import random
+
 
 load_dotenv()
 
 
 
 app = FastAPI()
-
-# add orm and database setup [DONE]
-# add google login
-
-# add api versioning
-
-# deploy the application to live
 
 
 @app.post("/business-details")
@@ -37,56 +32,56 @@ async def create_business_details(business_details: BusinessDetails):
 async def create_font():
     API_KEY = os.getenv("GOOGLE_FONTS_API_KEY")
     url = "https://www.googleapis.com/webfonts/v1/webfonts?key=" + API_KEY
-    response =  requests.get(url)
+    response =  requests.get(url, timeout=5)
+
     fonts = response.json()
-    return fonts['items']
+    list_of_fonts = fonts['items']
+
+    # Select 3 random fonts
+    random_fonts = random.sample(list_of_fonts, 3)
+
+    return {"fonts": random_fonts}
 
 
 @app.post("/color")
-async def create_color_pallete(data: dict = Body(...)):
-    url = "http://colormind.io/api/"
-    headers = {"Content-Type": "application/json"}
-    try:
-        response = requests.post(url, headers=headers, json=data)
-        response.raise_for_status()  # Raise exception for non-200 status codes
-
-        palette = response.json()["result"]
-        return palette
-
-    except requests.exceptions.HTTPError as e:
-        raise HTTPException(status_code=500, detail=f"Error fetching palette: {e}")
-
-
-@app.get("/messaging")
-def create_brand_messaging():
-    response = lch.generate_brand_messaging("Finance", "Targeting middle class citizens")
-    return {"response" : response}
-
-@app.get("/strategy")
-def create_brand_messaging():
-    response = lch.generate_business_strategy("Finance", "Targeting middle class citizens", "Nigeria")
-    return {"response" : response}
-
-@app.get("/brand_name")
-def generate_brand_name():
-    response = lch.generate_brand_name("Finance", "Targeting middle class citizens")
+async def create_color_pallete(base: Base):
+    response = lch.generate_brand_color(niche=base.niche, industry=base.industry)
     return {"response" : response}
 
 
-@app.get("/logo")
-def create_logo():
-    response = lch.generate_logo("Finance", "Targeting middle class citizens")
+@app.post("/messaging")
+def create_brand_messaging(base: Base):
+    response = lch.generate_brand_messaging(industry=base.industry, niche=base.niche)
     return {"response" : response}
 
-@app.get("/photography")
-def create_photography():
-    response = lch.generate_pics("Finance")
+@app.post("/strategy")
+def create_brand_strategy(brand_strategy: Strategy):
+    industry = brand_strategy.industry
+    niche = brand_strategy.niche
+    country = brand_strategy.country
+    response = lch.generate_business_strategy(industry=industry, niche=niche, country=country)
+    return {"response" : response}
+
+@app.post("/brand_name")
+def generate_brand_name(base: Base):
+    response = lch.generate_brand_name(niche=base.niche, industry=base.industry)
     return {"response" : response}
 
 
-@app.get("/illustration")
-def create_illustration():
-    response = lch.generate_pattern("Finance")
+@app.post("/logo")
+def create_logo(base: Base):
+    response = lch.generate_logo(industry=base.industry, niche=base.niche)
+    return {"response" : response}
+
+@app.post("/photography")
+def create_photography(base: Base):
+    response = lch.generate_pics(industry=base.industry)
+    return {"response" : response}
+
+
+@app.post("/illustration")
+def create_illustration(base: Base):
+    response = lch.generate_pattern(industry=base.industry)
     return {"response" : response}
 
 
