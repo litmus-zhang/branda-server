@@ -8,7 +8,7 @@ import json
 import re
 import markdown
 
-md= markdown.Markdown()
+md = markdown.Markdown()
 
 def generate_brand_name(industry: str, niche: str):
     llm = gai(temperature=0.8, model="gemini-pro", google_api_key=os.getenv('GOOGLE_AI_API_KEY'))
