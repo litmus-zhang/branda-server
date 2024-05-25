@@ -1,6 +1,7 @@
-from fastapi import Depends, HTTPException, status
-from fastapi.security import OAuth2PasswordBearer
-from passlib.context import CryptContext
-import os
+from firebase_admin import db
 
-o
+brands = db.collections("brands")
+
+
+# create a collection for Brands
+# - add name, logo, font and all brand identity

@@ -8,6 +8,7 @@ from config import langchain_helper as lch
 from models.schemas import Strategy, Base
 import random
 from config.config import get_firebase_user_from_token
+from config.helper import brands
 
 
 load_dotenv()
@@ -37,18 +38,18 @@ async def create_font():
     return {"fonts": random_fonts}
 
 
-@router.post("/color")
+@router.get("/color")
 async def create_color_pallete(base: Base):
     response = lch.generate_brand_color(niche=base.niche, industry=base.industry)
     return {"response" : response}
 
 
-@router.post("/messaging")
+@router.get("/messaging")
 def create_brand_messaging(base: Base):
     response = lch.generate_brand_messaging(industry=base.industry, niche=base.niche)
     return {"response" : response}
 
-@router.post("/strategy")
+@router.get("/strategy")
 def create_brand_strategy(brand_strategy: Strategy):
     industry = brand_strategy.industry
     niche = brand_strategy.niche
@@ -56,24 +57,24 @@ def create_brand_strategy(brand_strategy: Strategy):
     response = lch.generate_business_strategy(industry=industry, niche=niche, country=country)
     return {"response" : response}
 
-@router.post("/brand_name")
+@router.get("/brand_name")
 def generate_brand_name(base: Base):
     response = lch.generate_brand_name(niche=base.niche, industry=base.industry)
     return {"response" : response}
 
 
-@router.post("/logo")
+@router.get("/logo")
 def create_logo(base: Base):
     response = lch.generate_logo(industry=base.industry, niche=base.niche)
     return {"response" : response}
 
-@router.post("/photography")
+@router.get("/photography")
 def create_photography(base: Base):
     response = lch.generate_pics(industry=base.industry)
     return {"response" : response}
 
 
-@router.post("/illustration")
+@router.get("/illustration")
 def create_illustration(base: Base):
     response = lch.generate_pattern(industry=base.industry)
     return {"response" : response}
