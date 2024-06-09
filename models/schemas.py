@@ -6,8 +6,21 @@ class Strategy(BaseModel):
     country: str
 
 class Base(BaseModel):
-    industry: str
-    niche: str
+    niche : str
+    industry : str
+
+
+class BaseBody(BaseModel):
+    name: str | None = None
+    font: str | None = None
+    strategy: str | None = None
+    color: str | None = None
+    logo: str | None = None
+    messaging: str | None = None
+    photography: str | None = None
+    illustration: str | None = None
+    presentation: str | None = None
+
 class BusinessDetails(BaseModel):
     niche: str
     description: str
