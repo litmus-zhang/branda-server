@@ -1,6 +1,7 @@
 from langchain_community.llms import openai
 from langchain.chains import LLMChain
 from langchain_google_genai import ChatGoogleGenerativeAI as gai
+from langchain_google_vertexai import ChatVertexAI as gai
 from langchain.prompts import PromptTemplate
 from langchain_community.utilities.dalle_image_generator import DallEAPIWrapper
 import os

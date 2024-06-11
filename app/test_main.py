@@ -10,7 +10,9 @@ def test_status():
     assert res.json()['status'] == "OK"
 class TestAuth():
     def test_register_with_google(self):
-        pass
+        res = client.get('/signup')
+        assert res.status_code == 200
+        assert res.json()['message'] == "Sign Up with google"
 
     def test_login_with_google(self):
         pass
@@ -21,7 +23,7 @@ class TestAuth():
 
 class TestBrand():
     def test_get_brand_names(self):
-        res = client.get('/brand_name', params={"niche": "Finance", "industry":"Fintech"})
+        res = client.post('/brand_name', params={"niche": "Finance", "industry":"Fintech"})
         assert res.status_code == 200
         assert res.json()['data'] != None
         assert res.json()['message'] == "Brand names fetched successfully"
