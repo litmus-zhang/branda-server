@@ -1,26 +1,26 @@
-from fastapi import APIRouter, Query, Depends, Body
+from fastapi import APIRouter, Query, status
 from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordBearer
 from fastapi.exceptions import HTTPException
 from restcountries import RestCountryApiV2 as rapi
-import os
+from firebase_admin import auth
+from firebase_admin.auth import UserRecord
 from typing import Annotated
 from dotenv import load_dotenv
 from config.helper import BrandService
 from models.schemas import Strategy, Base, BaseBody, UserInput
-import random
 from config.firebase import init_firebase
-from passlib.hash import argon2
+from passlib.hash import argon2 as argon
 
 
 
 load_dotenv()
 
-db, auth = init_firebase()
+db, _auth = init_firebase()
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login")  # Placeholder for login endpoint
 
-brand_service = BrandService
+brand_service = BrandService()
 
 router = APIRouter()
 @router.get("/status", tags=["Health check"])
@@ -39,7 +39,7 @@ async def get_font():
     })
 
 
-@router.post("{userId}/brands/{brandId}/font", tags=["Brand"])
+@router.post("/{userId}/brands/{brandId}/font", tags=["Brand"])
 async def create_font(base: BaseBody, userId: str, brandId:str):
     # store in db
     pass
@@ -53,7 +53,7 @@ async def get_color_pallete(base: Base):
         "data": data
     })
 
-@router.post("{userId}/brands/{brandId}/color", tags=["Brand"])
+@router.post("/{userId}/brands/{brandId}/color", tags=["Brand"])
 async def create_color_pallete(base: BaseBody, userId: str, brandId: str):
     # store in db
     pass
@@ -67,7 +67,7 @@ def get_brand_messaging(base: Base):
         "data": data
     })
 
-@router.post("{userId}/brands/{brandId}/messaging", tags=["Brand"])
+@router.post("/{userId}/brands/{brandId}/messaging", tags=["Brand"])
 def create_brand_messaging(base: BaseBody, userId: str, brandId: str):
     # store in db
     pass
@@ -80,7 +80,7 @@ def get_brand_strategy(brand_strategy: Strategy):
         "data": data
     })
 
-@router.post("{userId}/brands/{brandId}", tags=["Brand"])
+@router.post("/{userId}/brands/{brandId}", tags=["Brand"])
 def create_brand_strategy(brand_strategy: BaseBody, userId: str, brandId: str):
     # store in db
     pass
@@ -93,7 +93,7 @@ def get_brand_name(base: Base):
         "data": data
     })
 
-@router.post("{userId}/brands/{brandId}", tags=["Brand"], status_code=201)
+@router.post("/{userId}/brands/{brandId}", tags=["Brand"], status_code=201)
 def post_brand_name(base: BaseBody, userId: str, brandId: str):
     # store in db
     pass
@@ -103,7 +103,7 @@ def post_brand_name(base: BaseBody, userId: str, brandId: str):
 def get_logo(base: Base):
     return brand_service.get_logo(base)
 
-@router.post("{userId}/brands/{brandId}/logo", tags=["Brand"])
+@router.post("/{userId}/brands/{brandId}/logo", tags=["Brand"])
 def create_logo(base: BaseBody, userId: str, brandId: str):
     # store in db
     pass
@@ -126,11 +126,19 @@ def create_illustration(base: BaseBody, userId: str, brandId: str):
     # store in db
     pass
 
-@router.get("{userId}/brands", tags=["Brand"])
+@router.get("/{userId}/brands", tags=["Brand"])
 def get_all_user_brand(userId: str):
-    data = db.collection(f'users/{userId}')
+    data = ""
     return JSONResponse(content={
         "message": "All user brand",
+        "data": data
+    })
+
+@router.get("/users/me", tags=["Brand"])
+def get_user_details(userId: str):
+    data = auth.get_user(userId)
+    return JSONResponse(content={
+        "message": "Fetched users data",
         "data": data
     })
 
@@ -144,51 +152,30 @@ def get_all_countries(country_name: Annotated[str | None, Query(max_length=50)] 
                 "name": country.name,
                 "flag": country.flag
             }
-    if country_name:
-        return countries[country_name]
-    else:
-        return countries
+    return countries[country_name] if country_name else countries
 
 
-@router.get("/login", tags=['Authentication'])
-async def login(user) :
+@router.post("/login", tags=['Authentication'])
+async def login(user: UserInput) :
     try:
-        decoded_token = auth.verify_id_token(access_token)
-        uid = decoded_token['uid']
-        # You can access additional user information from decoded_token
-    except Exception as e:
-        raise HTTPException(status_code=401, detail="Invalid Google access token")
-
-        # Check if user exists in your database (optional)
-        # If user doesn't exist, consider creating them based on UID
-
-        # Generate and return a JWT or other authentication token
-        # (Implementation details omitted for brevity)
-
-    return {"message": "Successfully logged in with Google"}
-
-@router.get("/logout", tags=['Authentication'])
-async def logout():
-    return {
-        message: "Logout"
-    }
+        s = auth.get_user_by_email(user.email)
+        if  s == auth.UserNotFoundError:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Invalid credentials")
+        return JSONResponse(content={
+            "message": "User login successful"
+        }
+        )
+    except Exception as exc:
+        raise HTTPException(status_code=401, detail="Invalid Google access token") from exc
 
 
 @router.post("/signup", tags=['Authentication'])
 async def signup(user: UserInput):
     try:
+        if auth.get_user_by_email(user.email) is not UserRecord:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Email already exist")
         auth.create_user(email=user.email, password=user.password)
-        # auth.generate_email_verification_link(email=user.email)
-        print(newHash)
         return JSONResponse(content={
-            "message": "User registration successful"
-        })
-
-
-    
-    except HTTPException:
-        raise HTTPException(detail="Invalid credentials")
-
-@router.get("/auth", tags=['Authentication'])
-async def auth_callback():
-    return
+            "message": "User registration successful"})
+    except HTTPException as exc :
+        raise HTTPException(detail="Invalid credentials", status_code=status.HTTP_400_BAD_REQUEST) from exc

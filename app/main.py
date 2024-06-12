@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Query
+from fastapi import FastAPI
 from dotenv import load_dotenv
 from app.router import router
 from fastapi.middleware.cors import CORSMiddleware
@@ -13,4 +13,3 @@ app.add_middleware(
     allow_credentials=True,
     allow_headers=["*"],
 )
-
