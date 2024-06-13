@@ -2,7 +2,6 @@ from fastapi import APIRouter, Query, status
 from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordBearer
 from fastapi.exceptions import HTTPException
-from restcountries import RestCountryApiV2 as rapi
 from firebase_admin import auth
 from firebase_admin.auth import UserRecord
 from typing import Annotated
@@ -141,18 +140,6 @@ def get_user_details(userId: str):
         "message": "Fetched users data",
         "data": data
     })
-
-
-@router.get("/all-countries/", tags=["Extras"])
-def get_all_countries(country_name: Annotated[str | None, Query(max_length=50)] = None ):
-    all = rapi.get_all()
-    countries = {}
-    for country in all:
-            countries[country.name] = {
-                "name": country.name,
-                "flag": country.flag
-            }
-    return countries[country_name] if country_name else countries
 
 
 @router.post("/login", tags=['Authentication'])

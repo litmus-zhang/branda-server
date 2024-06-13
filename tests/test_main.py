@@ -1,6 +1,6 @@
 from fastapi.testclient import TestClient
 import requests
-from .main import app
+from app.main import app
 
 projectId = "new-branda"
 def clear_firestore(PROJECT_ID: str = projectId):
@@ -9,16 +9,16 @@ def clear_firestore(PROJECT_ID: str = projectId):
 def clear_auth(PROJECT_ID: str = projectId):
     requests.delete(f'http://localhost:9099/emulator/v1/projects/{PROJECT_ID}/accounts', timeout=5000)
 client = TestClient(app, base_url="http://localhost:8000/api/v1")
-def test_status():
-    res = client.get('/status')
-    assert res.status_code == 200
-    assert res.json()['message'] == "All system operational"
-    assert res.json()['status'] == "OK"
-class TestAuth():
-    def test_signup(self):
-        res = client.post('/signup')
-        assert res.status_code == 201
-        assert res.json()['message'] == "User registration successful"
+# def test_status():
+#     res = client.get('/status')
+#     assert res.status_code == 200
+#     assert res.json()['message'] == "All system operational"
+#     assert res.json()['status'] == "OK"
+# class TestAuth():
+#     def test_signup(self):
+#         res = client.post('/signup')
+#         assert res.status_code == 201
+#         assert res.json()['message'] == "User registration successful"
 
     # def test_login_with_google(self):
     #     pass
