@@ -3,17 +3,32 @@ from fastapi.responses import JSONResponse
 from models.schemas import UserInput
 from firebase_admin import auth
 from firebase_admin.auth import UserRecord
-from firebase_admin.firestore import firestore
-
-db = firestore.Client
+from firebase_admin import firestore
 
 
 class UserService:
+    def __init__(self):
+        self.db = firestore.client()
+
     def get_user(self, user_id: str):
-        pass
+        return auth.get_user(user_id)
 
     def get_user_brands(self, user_id: str):
-        pass
+        try:
+            all_user_brands = (
+                self.db.collection("brands").where("userId", "==", user_id).stream()
+            )
+            user_brands = [brand.to_dict() for brand in all_user_brands]
+            return JSONResponse(
+                content={
+                    "message": "User brands received successfully",
+                    "data": user_brands,
+                }
+            )
+        except Exception as exc:
+            raise HTTPException(
+                detail={"message": "Error getting data"}, status_code=404
+            ) from exc
 
     def user_register(self, user: UserInput):
         try:
@@ -42,4 +57,4 @@ class UserService:
             raise HTTPException(
                 detail={"message": "User not found"},
                 status_code=status.HTTP_404_NOT_FOUND,
-            )
+            ) from None

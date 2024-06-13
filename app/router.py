@@ -1,15 +1,13 @@
-from fastapi import APIRouter, status
+from fastapi import APIRouter
 from fastapi.responses import JSONResponse
 from fastapi.security import OAuth2PasswordBearer
 from fastapi.exceptions import HTTPException
 from firebase_admin import auth
-from firebase_admin.auth import UserRecord
 from dotenv import load_dotenv
 from services.brand_service import BrandService
 from services.user_service import UserService
 from models.schemas import Strategy, Base, BaseBody, UserInput
 from config.firebase import init_firebase
-
 
 load_dotenv()
 
@@ -40,8 +38,7 @@ async def get_font():
 
 @router.post("/{userId}/brands/{brandId}/font", tags=["Brand"])
 async def create_font(base: BaseBody, userId: str, brandId: str):
-    # store in db
-    pass
+    return brand_service.store_font(base, userId, brandId)
 
 
 @router.get("/color", tags=["Brand"])
@@ -55,10 +52,9 @@ async def get_color_pallete(base: Base):
         raise HTTPException(status_code=404, detail="Error getting data") from exc
 
 
-@router.post("/{userId}/brands/{brandId}/color", tags=["Brand"])
+@router.post("/users/{userId}/brands/{brandId}/color", tags=["Brand"])
 async def create_color_pallete(base: BaseBody, userId: str, brandId: str):
-    # store in db
-    pass
+    return brand_service.store_color_pallete(base, brandId, userId)
 
 
 @router.get("/messaging", tags=["Brand"])
@@ -73,10 +69,9 @@ def get_brand_messaging(base: Base):
         raise HTTPException(status_code=404, detail="Error getting data") from exc
 
 
-@router.post("/{userId}/brands/{brandId}/messaging", tags=["Brand"])
+@router.post("/users/{userId}/brands/{brandId}/messaging", tags=["Brand"])
 def create_brand_messaging(base: BaseBody, userId: str, brandId: str):
-    # store in db
-    pass
+    return brand_service.store_brand_messaging(base, brandId, userId)
 
 
 @router.get("/strategy", tags=["Brand"])
@@ -90,10 +85,9 @@ def get_brand_strategy(brand_strategy: Strategy):
         raise HTTPException(status_code=404, detail="Error getting data") from exc
 
 
-@router.post("/{userId}/brands/{brandId}", tags=["Brand"])
+@router.post("/users/{userId}/brands/{brandId}/strategy", tags=["Brand"])
 def create_brand_strategy(brand_strategy: BaseBody, userId: str, brandId: str):
-    # store in db
-    pass
+    return brand_service.store_brand_strategy(brand_strategy, brandId, userId)
 
 
 @router.get("/brand_name", tags=["Brand"])
@@ -107,10 +101,9 @@ def get_brand_name(base: Base):
         raise HTTPException(status_code=404, detail="Error getting data") from exc
 
 
-@router.post("/{userId}/brands/{brandId}", tags=["Brand"], status_code=201)
-def post_brand_name(base: BaseBody, userId: str, brandId: str):
-    # store in db
-    pass
+@router.post("/users/{userId}/brands/brand_name", tags=["Brand"], status_code=201)
+def post_brand_name(base: BaseBody, userId: str):
+    return brand_service.store_brand_name(base, userId)
 
 
 @router.get("/logo", tags=["Brand"])
@@ -123,8 +116,7 @@ def get_logo(base: Base):
 
 @router.post("/{userId}/brands/{brandId}/logo", tags=["Brand"])
 def create_logo(base: BaseBody, userId: str, brandId: str):
-    # store in db
-    pass
+    return brand_service.store_brand_logo(base, brandId, userId)
 
 
 @router.get("/photography", tags=["Brand"])
@@ -137,8 +129,7 @@ def get_photography(base: Base):
 
 @router.post("{userId}/brands/{brandId}/photography", tags=["Brand"])
 def create_photography(base: BaseBody, userId: str, brandId: str):
-    # store in db
-    pass
+    return brand_service.store_brand_photography(base, brandId, userId)
 
 
 @router.get("/illustration", tags=["Brand"])
@@ -151,17 +142,12 @@ def get_illustration(base: Base):
 
 @router.post("{userId}/brands/{brandId}/illustration", tags=["Brand"])
 def create_illustration(base: BaseBody, userId: str, brandId: str):
-    # store in db
-    pass
+    return brand_service.store_brand_illustration(base, brandId, userId)
 
 
-@router.get("users/{userId}/brands", tags=["User"])
+@router.get("/users/{userId}/brands", tags=["User"])
 def get_all_user_brand(userId: str):
-    try:
-        data = ""
-        return JSONResponse(content={"message": "All user brand", "data": data})
-    except Exception as exc:
-        raise HTTPException(status_code=404, detail="Error getting data") from exc
+    return user_Service.get_user_brands(userId)
 
 
 @router.get("/users/me", tags=["User"])

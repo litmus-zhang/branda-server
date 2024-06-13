@@ -7,7 +7,7 @@ from config.firebase import clear_firestore_data, delete_all_auth_users
 client = TestClient(app, base_url="http://localhost:8000/api/v1")
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture(autouse=True, scope="module")
 def clear_test_data():
     yield
     clear_firestore_data()
@@ -21,23 +21,31 @@ def test_status():
     assert res.json()["status"] == "OK"
 
 
+# @pytest.fixture(scope="module")
+def user_signup(email="test@gmail.com", password="test123"):
+    response = client.post("/signup", json={"email": email, "password": password})
+    return response
+
+
+# @pytest.fixture(scope="module")
+def user_login(email="test@gmail.com", password="test123"):
+    response = client.post("/login", json={"email": email, "password": password})
+    return response
+
+
 class TestAuth:
     def test_signup(self):
-        res = client.post(
-            "/signup", json={"email": "test@gmail.com", "password": "test123"}
-        )
+        res = user_signup()
         assert res.status_code == 201
         assert res.json()["message"] == "User registration successful"
-        duplicate_res = client.post(
-            "/signup", json={"email": "test@gmail.com", "password": "test123"}
-        )
+        duplicate_res = user_signup()
         assert duplicate_res.status_code == 409
         assert duplicate_res.json()["detail"]["message"] == "User already exists"
 
     def test_login(self):
-        res = client.post(
-            "/signup", json={"email": "test@gmail.com", "password": "test123"}
-        )
+        res = user_login()
+        assert res.status_code == 200
+        assert res.json()["message"] == "User login successful"
 
     # def test_login_with_google(self):
     #     pass
@@ -46,12 +54,17 @@ class TestAuth:
     #     pass
 
 
-# class TestBrand():
-#     def test_get_brand_names(self):
-#         res = client.post('/brand_name', params={"niche": "Finance", "industry":"Fintech"})
-#         assert res.status_code == 200
-#         assert res.json()['data'] != None
-#         assert res.json()['message'] == "Brand names fetched successfully"
+class TestBrand:
+    def test_create_brand_names(self):
+        userId = ""
+        res = client.post(
+            f"/{userId}/brands/brand_name",
+            json={"niche": "Finance", "industry": "Fintech"},
+        )
+        assert res.status_code == 200
+        assert res.json()["data"] != None
+        assert res.json()["message"] == "Brand names fetched successfully"
+
 
 #     def test_post_brand_name(self):
 #         res = client.post('/brand_name', json={"name": "Jason Statham"})
