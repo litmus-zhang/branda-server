@@ -16,7 +16,6 @@ db, _auth = init_firebase()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login")
 brand_service = BrandService()
 user_Service = UserService()
-
 router = APIRouter()
 
 
