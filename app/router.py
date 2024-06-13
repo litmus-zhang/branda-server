@@ -1,100 +1,165 @@
-from fastapi import APIRouter, Query, Depends
-from restcountries import RestCountryApiV2 as rapi
-import os
-import requests
-from typing import Annotated
+from fastapi import APIRouter
+from fastapi.responses import JSONResponse
+from fastapi.security import OAuth2PasswordBearer
+from fastapi.exceptions import HTTPException
+from firebase_admin import auth
 from dotenv import load_dotenv
-from config import langchain_helper as lch
-from models.schemas import Strategy, Base
-import random
-from config.config import get_firebase_user_from_token
-from config.helper import brands
-
+from services.brand_service import BrandService
+from services.user_service import UserService
+from models.schemas import Strategy, Base, BaseBody, UserInput
+from config.firebase import init_firebase
 
 load_dotenv()
 
+db, _auth = init_firebase()
+
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login")
+brand_service = BrandService()
+user_Service = UserService()
 router = APIRouter()
 
 
-@router.get("/status")
+@router.get("/status", tags=["Health check"])
 async def get_status():
-    return {
-        "message": "All system operation",
-        "status": "OK"
-    }
-
-@router.get("/font")
-async def create_font():
-    API_KEY = os.getenv("GOOGLE_FONTS_API_KEY")
-    url = "https://www.googleapis.com/webfonts/v1/webfonts?key=" + API_KEY
-    response =  requests.get(url, timeout=5)
-
-    fonts = response.json()
-    list_of_fonts = fonts['items']
-
-    # Select 3 random fonts
-    random_fonts = random.sample(list_of_fonts, 3)
-
-    return {"fonts": random_fonts}
+    return {"message": "All system operational", "status": "OK"}
 
 
-@router.get("/color")
-async def create_color_pallete(base: Base):
-    response = lch.generate_brand_color(niche=base.niche, industry=base.industry)
-    return {"response" : response}
+@router.get("/font", tags=["Brand"])
+async def get_font():
+    try:
+        data = brand_service.get_font()
+        return JSONResponse(
+            content={"message": "Font Received Successfully", "data": data}
+        )
+    except Exception as exc:
+        raise HTTPException(status_code=404, detail="Error getting data") from exc
 
 
-@router.get("/messaging")
-def create_brand_messaging(base: Base):
-    response = lch.generate_brand_messaging(industry=base.industry, niche=base.niche)
-    return {"response" : response}
-
-@router.get("/strategy")
-def create_brand_strategy(brand_strategy: Strategy):
-    industry = brand_strategy.industry
-    niche = brand_strategy.niche
-    country = brand_strategy.country
-    response = lch.generate_business_strategy(industry=industry, niche=niche, country=country)
-    return {"response" : response}
-
-@router.get("/brand_name")
-def generate_brand_name(base: Base):
-    response = lch.generate_brand_name(niche=base.niche, industry=base.industry)
-    return {"response" : response}
+@router.post("/{userId}/brands/{brandId}/font", tags=["Brand"])
+async def create_font(base: BaseBody, userId: str, brandId: str):
+    return brand_service.store_font(base, userId, brandId)
 
 
-@router.get("/logo")
-def create_logo(base: Base):
-    response = lch.generate_logo(industry=base.industry, niche=base.niche)
-    return {"response" : response}
-
-@router.get("/photography")
-def create_photography(base: Base):
-    response = lch.generate_pics(industry=base.industry)
-    return {"response" : response}
-
-
-@router.get("/illustration")
-def create_illustration(base: Base):
-    response = lch.generate_pattern(industry=base.industry)
-    return {"response" : response}
+@router.get("/color", tags=["Brand"])
+async def get_color_pallete(base: Base):
+    try:
+        data = brand_service.get_color_pallete(base)
+        return JSONResponse(
+            content={"message": "Color pallete received successfully", "data": data}
+        )
+    except Exception as exc:
+        raise HTTPException(status_code=404, detail="Error getting data") from exc
 
 
-@router.get("/all-countries/")
-def get_all_countries(country_name: Annotated[str | None, Query(max_length=50)] = None ):
-    all = rapi.get_all()
-    countries = {}
-    for country in all:
-            countries[country.name] = {
-                "name": country.name,
-                "flag": country.flag
-            }
-    if country_name:
-        return countries[country_name]
-    else:
-        return countries
+@router.post("/users/{userId}/brands/{brandId}/color", tags=["Brand"])
+async def create_color_pallete(base: BaseBody, userId: str, brandId: str):
+    return brand_service.store_color_pallete(base, brandId, userId)
 
 
-@router.get("/userId")
-async def get_userid(user: Annotated[dict, Depends(get_firebase_user_from_token)]):
-    return {"id": user["uid"]}
+@router.get("/messaging", tags=["Brand"])
+def get_brand_messaging(base: Base):
+    try:
+
+        data = brand_service.get_brand_messaging(base)
+        return JSONResponse(
+            content={"message": "Brand messaging received Successfully", "data": data}
+        )
+    except Exception as exc:
+        raise HTTPException(status_code=404, detail="Error getting data") from exc
+
+
+@router.post("/users/{userId}/brands/{brandId}/messaging", tags=["Brand"])
+def create_brand_messaging(base: BaseBody, userId: str, brandId: str):
+    return brand_service.store_brand_messaging(base, brandId, userId)
+
+
+@router.get("/strategy", tags=["Brand"])
+def get_brand_strategy(brand_strategy: Strategy):
+    try:
+        data = brand_service.get_brand_strategy(brand_strategy)
+        return JSONResponse(
+            content={"message": "Brand strategy received successfully", "data": data}
+        )
+    except Exception as exc:
+        raise HTTPException(status_code=404, detail="Error getting data") from exc
+
+
+@router.post("/users/{userId}/brands/{brandId}/strategy", tags=["Brand"])
+def create_brand_strategy(brand_strategy: BaseBody, userId: str, brandId: str):
+    return brand_service.store_brand_strategy(brand_strategy, brandId, userId)
+
+
+@router.get("/brand_name", tags=["Brand"])
+def get_brand_name(base: Base):
+    try:
+        data = brand_service.get_brand_name(base)
+        return JSONResponse(
+            content={"message": "Brand names fetched successfully", "data": data}
+        )
+    except Exception as exc:
+        raise HTTPException(status_code=404, detail="Error getting data") from exc
+
+
+@router.post("/users/{userId}/brands/brand_name", tags=["Brand"], status_code=201)
+def post_brand_name(base: BaseBody, userId: str):
+    return brand_service.store_brand_name(base, userId)
+
+
+@router.get("/logo", tags=["Brand"])
+def get_logo(base: Base):
+    try:
+        return brand_service.get_logo(base)
+    except Exception as exc:
+        raise HTTPException(status_code=404, detail="Error getting data") from exc
+
+
+@router.post("/{userId}/brands/{brandId}/logo", tags=["Brand"])
+def create_logo(base: BaseBody, userId: str, brandId: str):
+    return brand_service.store_brand_logo(base, brandId, userId)
+
+
+@router.get("/photography", tags=["Brand"])
+def get_photography(base: Base):
+    try:
+        return brand_service.get_photography(base)
+    except Exception as exc:
+        raise HTTPException(status_code=404, detail="Error getting data") from exc
+
+
+@router.post("{userId}/brands/{brandId}/photography", tags=["Brand"])
+def create_photography(base: BaseBody, userId: str, brandId: str):
+    return brand_service.store_brand_photography(base, brandId, userId)
+
+
+@router.get("/illustration", tags=["Brand"])
+def get_illustration(base: Base):
+    try:
+        return brand_service.get_illustration(base)
+    except Exception as exc:
+        raise HTTPException(status_code=404, detail="Error getting data") from exc
+
+
+@router.post("{userId}/brands/{brandId}/illustration", tags=["Brand"])
+def create_illustration(base: BaseBody, userId: str, brandId: str):
+    return brand_service.store_brand_illustration(base, brandId, userId)
+
+
+@router.get("/users/{userId}/brands", tags=["User"])
+def get_all_user_brand(userId: str):
+    return user_Service.get_user_brands(userId)
+
+
+@router.get("/users/me", tags=["User"])
+def get_user_details(userId: str):
+    data = auth.get_user(userId)
+    return JSONResponse(content={"message": "Fetched users data", "data": data})
+
+
+@router.post("/login", tags=["Authentication"])
+async def login(user: UserInput):
+    return user_Service.user_login(user)
+
+
+@router.post("/signup", tags=["Authentication"])
+async def signup(user: UserInput):
+    return user_Service.user_register(user)
