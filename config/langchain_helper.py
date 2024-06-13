@@ -101,48 +101,48 @@ def format_strategies(markdown_text):
     return formatted_strategies
 
 
-# def generate_logo(industry: str, niche: str):
-#     llm = openai.OpenAI(temperature=0.8, api_key=os.getenv("OPENAI_API_KEY"))
-#     prompt_template_name = PromptTemplate(
-#         template="give me one minimalist logo only with for {niche}, which operates in {industry} industry.",
-#         input_variables=["industry", "niche"],
-#     )
-#     name_chain = prompt_template_name | llm
-#     # response = DallEAPIWrapper(
-#     #     model="dall-e-3",
-#     #     quality="standard",
-#     # ).run(name_chain.run({"industry": industry, "niche": niche}))
-#     response = name_chain.invoke({"industry": industry, "niche": niche})
-#     return response
+def generate_logo(industry: str, niche: str):
+    llm = openai.OpenAI(temperature=0.8, api_key=os.getenv("OPENAI_API_KEY"))
+    prompt_template_name = PromptTemplate(
+        template="give me one minimalist logo only with for {niche}, which operates in {industry} industry.",
+        input_variables=["industry", "niche"],
+    )
+    name_chain = prompt_template_name | llm
+    # response = DallEAPIWrapper(
+    #     model="dall-e-3",
+    #     quality="standard",
+    # ).run(name_chain.run({"industry": industry, "niche": niche}))
+    response = name_chain.invoke({"industry": industry, "niche": niche})
+    return response
 
 
-# def generate_pattern(industry: str):
-#     llm = openai.OpenAI(temperature=0.8, api_key=os.getenv("OPENAI_API_KEY"))
-#     prompt_template_name = PromptTemplate(
-#         template="give me a svg repeated pattern that can be used for background color or image in {industry} company website or flier",
-#         input_variables=["industry"],
-#     )
-#     # name_chain = LLMChain(llm=llm, prompt=prompt_template_name)
-#     name_chain = prompt_template_name | llm
-#     # response = DallEAPIWrapper(
-#     #     model="dall-e-3",
-#     #     quality="standard",
-#     # ).run(name_chain.run({"industry": industry}))
-#     # ans = response.split("\n")
-#     ans = name_chain.invoke({"industry": industry})
-#     return ans
+def generate_pattern(industry: str):
+    llm = openai.OpenAI(temperature=0.8, api_key=os.getenv("OPENAI_API_KEY"))
+    prompt_template_name = PromptTemplate(
+        template="give me a svg repeated pattern that can be used for background color or image in {industry} company website or flier",
+        input_variables=["industry"],
+    )
+    # name_chain = LLMChain(llm=llm, prompt=prompt_template_name)
+    name_chain = prompt_template_name | llm
+    # response = DallEAPIWrapper(
+    #     model="dall-e-3",
+    #     quality="standard",
+    # ).run(name_chain.run({"industry": industry}))
+    # ans = response.split("\n")
+    ans = name_chain.invoke({"industry": industry})
+    return ans
 
-# def generate_pics(industry: str):
-#     llm = openai.OpenAI(temperature=0.8, api_key=os.getenv("OPENAI_API_KEY"))
-#     prompt_template_name = PromptTemplate(
-#         template="give me realistic image that can be used to define a company in {industry} company website or flier",
-#         input_variables=["industry"],
-#     )
-#     name_chain = prompt_template_name | llm
-#     # response = DallEAPIWrapper(
-#     #     model="dall-e-3",
-#     #     quality="standard",
-#     # ).run(name_chain.run({"industry": industry}))
-#     # ans = response.split("\n")
-#     ans = name_chain.invoke({"industry": industry})
-#     return ans
+def generate_pics(industry: str):
+    llm = openai.OpenAI(temperature=0.8, api_key=os.getenv("OPENAI_API_KEY"))
+    prompt_template_name = PromptTemplate(
+        template="give me realistic image that can be used to define a company in {industry} company website or flier",
+        input_variables=["industry"],
+    )
+    name_chain = prompt_template_name | llm
+    # response = DallEAPIWrapper(
+    #     model="dall-e-3",
+    #     quality="standard",
+    # ).run(name_chain.run({"industry": industry}))
+    # ans = response.split("\n")
+    ans = name_chain.invoke({"industry": industry})
+    return ans

@@ -1,25 +1,43 @@
 from fastapi.testclient import TestClient
-import requests
 from app.main import app
+import pytest
+from config.firebase import clear_firestore_data, delete_all_auth_users
 
-projectId = "new-branda"
-def clear_firestore(PROJECT_ID: str = projectId):
-    requests.delete(f'http://localhost:8080/emulator/v1/projects/{PROJECT_ID}/databases/(default)/documents', timeout=5000)
 
-def clear_auth(PROJECT_ID: str = projectId):
-    requests.delete(f'http://localhost:9099/emulator/v1/projects/{PROJECT_ID}/accounts', timeout=5000)
 client = TestClient(app, base_url="http://localhost:8000/api/v1")
-# def test_status():
-#     res = client.get('/status')
-#     assert res.status_code == 200
-#     assert res.json()['message'] == "All system operational"
-#     assert res.json()['status'] == "OK"
-# class TestAuth():
-#     def test_signup(self):
-#         res = client.post('/signup')
-#         assert res.status_code == 201
-#         assert res.json()['message'] == "User registration successful"
 
+
+@pytest.fixture(autouse=True)
+def clear_test_data():
+    yield
+    clear_firestore_data()
+    delete_all_auth_users()
+
+
+def test_status():
+    res = client.get("/status")
+    assert res.status_code == 200
+    assert res.json()["message"] == "All system operational"
+    assert res.json()["status"] == "OK"
+
+
+class TestAuth:
+    def test_signup(self):
+        res = client.post(
+            "/signup", json={"email": "test@gmail.com", "password": "test123"}
+        )
+        assert res.status_code == 201
+        assert res.json()["message"] == "User registration successful"
+        duplicate_res = client.post(
+            "/signup", json={"email": "test@gmail.com", "password": "test123"}
+        )
+        assert duplicate_res.status_code == 409
+        assert duplicate_res.json()["message"] == "User already exists"
+
+    def test_login(self):
+        res = client.post(
+            "/signup", json={"email": "test@gmail.com", "password": "test123"}
+        )
     # def test_login_with_google(self):
     #     pass
 
@@ -89,14 +107,14 @@ client = TestClient(app, base_url="http://localhost:8000/api/v1")
 
 
 # class UserBrand():
-    # def test_get_all_user_brands(self):
-    #     pass
+# def test_get_all_user_brands(self):
+#     pass
 
-    # def test_get_a_user_brands(self):
-    #     pass
+# def test_get_a_user_brands(self):
+#     pass
 
-    # def test_update_a_user_brands(self):
-    #     pass
+# def test_update_a_user_brands(self):
+#     pass
 
-    # def test_delete_a_user_brands(self):
-    #     pass
+# def test_delete_a_user_brands(self):
+#     pass
