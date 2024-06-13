@@ -172,17 +172,7 @@ def get_user_details(userId: str):
 
 @router.post("/login", tags=["Authentication"])
 async def login(user: UserInput):
-    try:
-        s = auth.get_user_by_email(user.email)
-        if s == auth.UserNotFoundError:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Invalid credentials"
-            )
-        return JSONResponse(content={"message": "User login successful"})
-    except Exception as exc:
-        raise HTTPException(
-            status_code=401, detail="Invalid Google access token"
-        ) from exc
+    return user_Service.user_login(user)
 
 
 @router.post("/signup", tags=["Authentication"])

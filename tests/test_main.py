@@ -32,12 +32,13 @@ class TestAuth:
             "/signup", json={"email": "test@gmail.com", "password": "test123"}
         )
         assert duplicate_res.status_code == 409
-        assert duplicate_res.json()["message"] == "User already exists"
+        assert duplicate_res.json()["detail"]["message"] == "User already exists"
 
     def test_login(self):
         res = client.post(
             "/signup", json={"email": "test@gmail.com", "password": "test123"}
         )
+
     # def test_login_with_google(self):
     #     pass
 
