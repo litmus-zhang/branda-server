@@ -145,6 +145,11 @@ def create_illustration(base: BaseBody, userId: str, brandId: str):
     return brand_service.store_brand_illustration(base, brandId, userId)
 
 
+@router.put("/users/{userId}/brands/{brandId}", tags=["Brand"])
+def update_brand_details(base: BaseBody, userId: str, brandId: str):
+    return brand_service.update_brand_details(base, brandId, userId)
+
+
 @router.get("/users/{userId}/brands", tags=["User"])
 def get_all_user_brand(userId: str):
     return user_Service.get_user_brands(userId)

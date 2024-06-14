@@ -186,3 +186,29 @@ class BrandService:
             raise HTTPException(
                 detail={"message": "Error storing data"}, status_code=404
             ) from exc
+
+    def update_brand_details(self, base: BaseBody, brandId: str, userId: str):
+        try:
+            brandCol = self.db.collection("brands").document(brandId)
+            brandCol.update(
+                {
+                    "name": base.name,
+                    "font": base.font,
+                    "color": base.color,
+                    "messaging": base.messaging,
+                    "strategy": base.strategy,
+                    "logo": base.logo,
+                    "photography": base.photography,
+                    "illustration": base.illustration,
+                    "presentation": base.presentation,
+                    "userId": userId,
+                }
+            )
+            return JSONResponse(
+                content={"message": "Brand details updated successfully"},
+                status_code=201,
+            )
+        except Exception as exc:
+            raise HTTPException(
+                detail={"message": "Error updating brand"}, status_code=404
+            ) from exc

@@ -2,7 +2,6 @@ from fastapi import HTTPException, status
 from fastapi.responses import JSONResponse
 from models.schemas import UserInput
 from firebase_admin import auth
-from firebase_admin.auth import UserRecord
 from firebase_admin import firestore
 
 
