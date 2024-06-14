@@ -30,8 +30,12 @@ def clear_firestore_data():
     # Add logic to delete documents from your collections
     # Example: Delete all documents from 'users' collection
     users_ref = db.collection("users")
+    brands_ref = db.collection("brands")
     docs = users_ref.stream()
+    docs2 = brands_ref.stream()
     for doc in docs:
+        doc.reference.delete()
+    for doc in docs2:
         doc.reference.delete()
 
 

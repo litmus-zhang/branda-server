@@ -3,10 +3,13 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database} {
     match /documents {
+      function isUserOwned(uid){
+        return request.auth.uid == uid;
+      }
       match /users/{userId} {
-        allow read, write: if request.auth.uid == userId;
-        match /bookmarks {
-          allow read, write: if request.auth.uid == userId;
+        allow read, write: if isUserOwned(userId);
+        match /brands/{brand_Id} {
+          allow read, write: if isUserOwned(resource.data.userId);
         }
       }
     }

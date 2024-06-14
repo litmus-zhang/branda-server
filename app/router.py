@@ -36,7 +36,7 @@ async def get_font():
         raise HTTPException(status_code=404, detail="Error getting data") from exc
 
 
-@router.post("/{userId}/brands/{brandId}/font", tags=["Brand"])
+@router.post("/users/{userId}/brands/{brandId}/font", tags=["Brand"])
 async def create_font(base: BaseBody, userId: str, brandId: str):
     return brand_service.store_font(base, userId, brandId)
 
@@ -114,7 +114,7 @@ def get_logo(base: Base):
         raise HTTPException(status_code=404, detail="Error getting data") from exc
 
 
-@router.post("/{userId}/brands/{brandId}/logo", tags=["Brand"])
+@router.post("/users/{userId}/brands/{brandId}/logo", tags=["Brand"])
 def create_logo(base: BaseBody, userId: str, brandId: str):
     return brand_service.store_brand_logo(base, brandId, userId)
 
@@ -127,7 +127,7 @@ def get_photography(base: Base):
         raise HTTPException(status_code=404, detail="Error getting data") from exc
 
 
-@router.post("{userId}/brands/{brandId}/photography", tags=["Brand"])
+@router.post("/users/{userId}/brands/{brandId}/photography", tags=["Brand"])
 def create_photography(base: BaseBody, userId: str, brandId: str):
     return brand_service.store_brand_photography(base, brandId, userId)
 
@@ -140,7 +140,7 @@ def get_illustration(base: Base):
         raise HTTPException(status_code=404, detail="Error getting data") from exc
 
 
-@router.post("{userId}/brands/{brandId}/illustration", tags=["Brand"])
+@router.post("/users/{userId}/brands/{brandId}/illustration", tags=["Brand"])
 def create_illustration(base: BaseBody, userId: str, brandId: str):
     return brand_service.store_brand_illustration(base, brandId, userId)
 
