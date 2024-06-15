@@ -3,11 +3,9 @@ from firebase_admin.auth import Client
 import os
 
 
-# Replace 'path/to/your/serviceAccountKey.json' with the actual path
-
-
-os.environ["FIREBASE_AUTH_EMULATOR_HOST"] = "localhost:9099"
-os.environ["FIRESTORE_EMULATOR_HOST"] = "localhost:8080"
+if os.environ.get("development"):
+    os.environ["FIREBASE_AUTH_EMULATOR_HOST"] = "localhost:9099"
+    os.environ["FIRESTORE_EMULATOR_HOST"] = "localhost:8080"
 
 
 def init_firebase():
@@ -30,9 +28,14 @@ def clear_firestore_data():
     # Add logic to delete documents from your collections
     # Example: Delete all documents from 'users' collection
     users_ref = db.collection("users")
+    brands_ref = db.collection("brands")
     docs = users_ref.stream()
+    docs2 = brands_ref.stream()
     for doc in docs:
         doc.reference.delete()
+    for doc in docs2:
+        doc.reference.delete()
+
 
 
 # Function to delete all users from Firebase Authentication
