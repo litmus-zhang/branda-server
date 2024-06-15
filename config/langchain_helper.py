@@ -11,8 +11,10 @@ from langchain_google_genai import GoogleGenerativeAI as gai
 from langchain_google_vertexai.vision_models import VertexAIImageGeneratorChat
 from langchain_openai import OpenAI
 
+
 md = markdown.Markdown()
 generator = VertexAIImageGeneratorChat(number_of_results=2, quality="standard")
+
 
 
 def generate_brand_name(industry: str, niche: str):
@@ -77,6 +79,7 @@ def generate_business_strategy(industry: str, niche: str, country: str = "Nigeri
     prompt_template_name = PromptTemplate(
         template="I have a business with the niche being {niche}, and I want a superb brand strategy for it, it is operating in the {industry} industry. Give me 2 well detailed business strategies for a company operating in {industry} for {niche} living in {country}, using the Odyssey 3.14 approach of Value Architecture, Value Proposition and Profit Equation. i want the strategy should be written in markdown format like Strategy 1: Description of the strategy. Strategy 2: Description of the strategy.",
         input_variables=["industry", "niche", "country"],
+
     )
 
     name_chain = prompt_template_name | llm

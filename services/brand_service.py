@@ -212,3 +212,4 @@ class BrandService:
             raise HTTPException(
                 detail={"message": "Error updating data"}, status_code=404
             ) from exc
+

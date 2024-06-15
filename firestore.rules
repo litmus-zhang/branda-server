@@ -10,6 +10,7 @@ service cloud.firestore {
         allow read, write: if isUserOwned(userId);
         match /brands/{brand_Id} {
           allow read, write: if isUserOwned(resource.data.userId);
+
         }
       }
     }
