@@ -5,12 +5,11 @@ import re
 import markdown
 from langchain_community.llms import openai
 from langchain_community.utilities.dalle_image_generator import DallEAPIWrapper
+from langchain_core.messages import AIMessage, HumanMessage
 from langchain_core.prompts import PromptTemplate
 from langchain_google_genai import GoogleGenerativeAI as gai
 from langchain_google_vertexai.vision_models import VertexAIImageGeneratorChat
-from langchain_core.messages import AIMessage, HumanMessage
 from langchain_openai import OpenAI
-
 
 md = markdown.Markdown()
 generator = VertexAIImageGeneratorChat(number_of_results=2, quality="standard")

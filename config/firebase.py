@@ -3,11 +3,9 @@ from firebase_admin.auth import Client
 import os
 
 
-# Replace 'path/to/your/serviceAccountKey.json' with the actual path
-
-
-os.environ["FIREBASE_AUTH_EMULATOR_HOST"] = "localhost:9099"
-os.environ["FIRESTORE_EMULATOR_HOST"] = "localhost:8080"
+if os.environ.get("development"):
+    os.environ["FIREBASE_AUTH_EMULATOR_HOST"] = "localhost:9099"
+    os.environ["FIRESTORE_EMULATOR_HOST"] = "localhost:8080"
 
 
 def init_firebase():
