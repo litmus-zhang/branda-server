@@ -157,5 +157,4 @@ def generate_pics(industry: str):
     # ans = response.split("\n")
     image_url = DallEAPIWrapper(n=2).run(name_chain.invoke({"industry": industry}))
     response = image_url.split("\n")
-
     return response
