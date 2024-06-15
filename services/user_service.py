@@ -49,7 +49,10 @@ class UserService:
         try:
             user = auth.get_user_by_email(email=user.email)
             return JSONResponse(
-                content={"message": "User login successful"},
+                content={
+                    "message": "User login successful",
+                    "token": user.uid,
+                },
                 status_code=status.HTTP_200_OK,
             )
         except auth.UserNotFoundError:

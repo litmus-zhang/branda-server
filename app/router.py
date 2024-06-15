@@ -1,6 +1,7 @@
-from fastapi import APIRouter
+from typing import Annotated
+from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
-from fastapi.security import OAuth2PasswordBearer
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.exceptions import HTTPException
 from firebase_admin import auth
 from dotenv import load_dotenv
@@ -11,13 +12,32 @@ from config.firebase import init_firebase
 
 load_dotenv()
 
-db, _auth = init_firebase()
+db, _ = init_firebase()
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/login")
+bearer_scheme = HTTPBearer(auto_error=False)
 brand_service = BrandService()
 user_Service = UserService()
 
 router = APIRouter()
+
+
+def get_current_user(
+    token: Annotated[HTTPAuthorizationCredentials | None, Depends(bearer_scheme)]
+) -> dict | None:
+    try:
+        if not token:
+            raise HTTPException(status_code=401, detail="No token provided")
+        user = auth.verify_id_token(token.credentials)
+        print(user)
+        return user
+
+    except Exception as exc:
+        raise HTTPException(status_code=401, detail="Invalid credentials") from exc
+
+
+@router.get("/users/me", tags=["User"])
+async def get_user_id(user: Annotated[dict, Depends(get_current_user)]):
+    return {"userId": user}
 
 
 @router.get("/status", tags=["Health check"])
@@ -110,6 +130,7 @@ def post_brand_name(base: BaseBody, userId: str):
 def get_logo(base: Base):
     try:
         return brand_service.get_logo(base)
+
     except Exception as exc:
         raise HTTPException(status_code=404, detail="Error getting data") from exc
 
@@ -153,12 +174,6 @@ def update_brand_details(base: BaseBody, userId: str, brandId: str):
 @router.get("/users/{userId}/brands", tags=["User"])
 def get_all_user_brand(userId: str):
     return user_Service.get_user_brands(userId)
-
-
-@router.get("/users/me", tags=["User"])
-def get_user_details(userId: str):
-    data = auth.get_user(userId)
-    return JSONResponse(content={"message": "Fetched users data", "data": data})
 
 
 @router.post("/login", tags=["Authentication"])

@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 load_dotenv()
 app = FastAPI()
 app.include_router(router, prefix="/api/v1")
-origin=["*"]
+origin = ["*"]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origin,

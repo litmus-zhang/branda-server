@@ -210,5 +210,5 @@ class BrandService:
             )
         except Exception as exc:
             raise HTTPException(
-                detail={"message": "Error updating brand"}, status_code=404
+                detail={"message": "Error updating data"}, status_code=404
             ) from exc

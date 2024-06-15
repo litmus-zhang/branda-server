@@ -3,12 +3,17 @@ import os
 import re
 
 import markdown
-from langchain.prompts import PromptTemplate
 from langchain_community.llms import openai
 from langchain_community.utilities.dalle_image_generator import DallEAPIWrapper
+from langchain_core.prompts import PromptTemplate
 from langchain_google_genai import GoogleGenerativeAI as gai
+from langchain_google_vertexai.vision_models import VertexAIImageGeneratorChat
+from langchain_core.messages import AIMessage, HumanMessage
+from langchain_openai import OpenAI
+
 
 md = markdown.Markdown()
+generator = VertexAIImageGeneratorChat(number_of_results=2, quality="standard")
 
 
 def generate_brand_name(industry: str, niche: str):
@@ -102,17 +107,22 @@ def format_strategies(markdown_text):
 
 
 def generate_logo(industry: str, niche: str):
-    llm = openai.OpenAI(temperature=0.8, api_key=os.getenv("OPENAI_API_KEY"))
+    llm = OpenAI(temperature=0.9, n=2, api_key=os.getenv("OPENAI_API_KEY"))
     prompt_template_name = PromptTemplate(
-        template="give me one minimalist logo only with for {niche}, which operates in {industry} industry.",
+        template="give me 3 minimalist logo only with for {niche}, which operates in {industry} industry.",
         input_variables=["industry", "niche"],
     )
     name_chain = prompt_template_name | llm
-    # response = DallEAPIWrapper(
-    #     model="dall-e-3",
-    #     quality="standard",
-    # ).run(name_chain.run({"industry": industry, "niche": niche}))
-    response = name_chain.invoke({"industry": industry, "niche": niche})
+    # message = "give me some minimalist logo only with for Defi Startup, which operates in blockchain industry."
+    # messages = [HumanMessage(content=[message])]
+    # response = generator.invoke(messages)
+    # generated_image = response.content[0]
+    # print(generated_image)
+    image_url = DallEAPIWrapper(n=2).run(
+        name_chain.invoke({"industry": industry, "niche": niche})
+    )
+    response = image_url.split("\n")
+
     return response
 
 
@@ -129,8 +139,10 @@ def generate_pattern(industry: str):
     #     quality="standard",
     # ).run(name_chain.run({"industry": industry}))
     # ans = response.split("\n")
-    ans = name_chain.invoke({"industry": industry})
-    return ans
+    image_url = DallEAPIWrapper(n=2).run(name_chain.invoke({"industry": industry}))
+    response = image_url.split("\n")
+    return response
+
 
 def generate_pics(industry: str):
     llm = openai.OpenAI(temperature=0.8, api_key=os.getenv("OPENAI_API_KEY"))
@@ -144,5 +156,7 @@ def generate_pics(industry: str):
     #     quality="standard",
     # ).run(name_chain.run({"industry": industry}))
     # ans = response.split("\n")
-    ans = name_chain.invoke({"industry": industry})
-    return ans
+    image_url = DallEAPIWrapper(n=2).run(name_chain.invoke({"industry": industry}))
+    response = image_url.split("\n")
+
+    return response
