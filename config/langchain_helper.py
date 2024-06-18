@@ -10,6 +10,10 @@ from langchain_core.prompts import PromptTemplate
 from langchain_google_genai import GoogleGenerativeAI as gai
 from langchain_google_vertexai.vision_models import VertexAIImageGeneratorChat
 from langchain_openai import OpenAI
+import base64
+import io
+
+from PIL import Image
 
 md = markdown.Markdown()
 generator = VertexAIImageGeneratorChat(number_of_results=2, quality="standard")
@@ -123,6 +127,15 @@ def generate_logo(industry: str, niche: str):
     response = image_url.split("\n")
 
     return response
+    # final = image_from_base64(generated_image)
+    # return final
+
+
+def image_from_base64(generated_image):
+    img_base64 = generated_image["image_url"]["url"].split(",")[-1]
+
+    img = Image.open(io.BytesIO(base64.decodebytes(bytes(img_base64, "utf-8"))))
+    return img
 
 
 def generate_pattern(industry: str):
@@ -150,11 +163,6 @@ def generate_pics(industry: str):
         input_variables=["industry"],
     )
     name_chain = prompt_template_name | llm
-    # response = DallEAPIWrapper(
-    #     model="dall-e-3",
-    #     quality="standard",
-    # ).run(name_chain.run({"industry": industry}))
-    # ans = response.split("\n")
     image_url = DallEAPIWrapper(n=2).run(name_chain.invoke({"industry": industry}))
     response = image_url.split("\n")
     return response

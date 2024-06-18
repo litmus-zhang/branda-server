@@ -128,11 +128,7 @@ def post_brand_name(base: BaseBody, userId: str):
 
 @router.get("/logo", tags=["Brand"])
 def get_logo(base: Base):
-    try:
-        return brand_service.get_logo(base)
-
-    except Exception as exc:
-        raise HTTPException(status_code=404, detail="Error getting data") from exc
+    return brand_service.get_logo(base)
 
 
 @router.post("/users/{userId}/brands/{brandId}/logo", tags=["Brand"])

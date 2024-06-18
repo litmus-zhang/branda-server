@@ -50,8 +50,15 @@ class BrandService:
         return response
 
     def get_logo(self, base: Base):
-        response = lch.generate_logo(industry=base.industry, niche=base.niche)
-        return response
+        try:
+            response = lch.generate_logo(industry=base.industry, niche=base.niche)
+            return JSONResponse(
+                content={"message": "Logo received successfully", "data": response}
+            )
+        except Exception as exc:
+            raise HTTPException(
+                detail={"message": "Error getting data"}, status_code=404
+            ) from exc
 
     def get_photography(self, base: Base):
         response = lch.generate_pics(industry=base.industry)
