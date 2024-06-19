@@ -1,4 +1,5 @@
 import os
+import uuid
 import requests
 import random
 from models.schemas import Base, Strategy, BaseBody
@@ -13,6 +14,7 @@ from firebase_admin import firestore
 class BrandService:
     def __init__(self):
         self.db = firestore.client()
+        self.brand_col = self.db.collection("brands")
 
     def get_brand_name(self, base: Base):
         response = lch.generate_brand_name(niche=base.niche, industry=base.industry)
@@ -196,7 +198,7 @@ class BrandService:
 
     def update_brand_details(self, base: BaseBody, brandId: str, userId: str):
         try:
-            brandCol = self.db.collection("brands").document(brandId)
+            brandCol = self.brand_col.document(brandId)
             brandCol.update(
                 {
                     "name": base.name,
@@ -219,3 +221,25 @@ class BrandService:
             raise HTTPException(
                 detail={"message": "Error updating data"}, status_code=404
             ) from exc
+
+    async def create_shareable_link(self, brand_doc):
+        view_doc_id = str(uuid.uuid5(name=brand_doc.id, namespace=uuid.NAMESPACE_DNS))
+        view_data = {
+            "brand_ref": brand_doc.reference,
+            "public_link": os.getenv("PUBLIC_URL")
+            + "/brand/view/"
+            + view_doc_id,  # Replace with your URL scheme
+        }
+        views_collection = self.db.collection(
+            "views"
+        )  # Add this line to initialize the 'views_collection'
+        view_doc = views_collection.document(view_doc_id).set(view_data)
+
+        # Update brand document to be public (optional)
+        # brand_doc.reference.update({"public": True})
+
+        return view_data
+
+    def get_brand_by_id(self, brandId: str):
+        brand = self.brand_col.document(brandId).get()
+        return brand.to_dict()

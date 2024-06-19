@@ -171,6 +171,23 @@ def update_brand_details(base: BaseBody, userId: str, brandId: str):
 def get_all_user_brand(userId: str):
     return user_Service.get_user_brands(userId)
 
+@router.post("/brands/{brand_id}/share", tags=['Brand'])
+async def generate_shareable_link(
+    brand_id: str, email: str | None = None
+):
+    brand_doc = await brand_service.get_brand_by_id(brand_id)
+
+    # Security check (consider using Firestore Security Rules or additional checks)
+    if not brand_doc.data.get("public", False):
+        raise HTTPException(status_code=403, detail="Brand document not publicly accessible")
+
+    view_data = await brand_service.create_shareable_link(brand_doc)
+
+    # Optional email sending (use a secure email API)
+    if email:
+        # Replace with your email sending logic (avoid sending sensitive info)
+        # ...
+        return view_data
 
 @router.post("/login", tags=["Authentication"])
 async def login(user: UserInput):

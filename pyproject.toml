@@ -19,6 +19,7 @@ markdown = "^3.6"
 passlib = "^1.7.4"
 langchain-openai = "^0.1.8"
 pillow = "^10.3.0"
+novu = "^1.14.0"
 
 
 [tool.poetry.group.dev.dependencies]

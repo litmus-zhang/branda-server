@@ -2044,6 +2044,20 @@ files = [
 ]
 
 [[package]]
+name = "novu"
+version = "1.14.0"
+description = "This project aims to provide a wrapper for the Novu API."
+optional = false
+python-versions = ">=3.8,<4.0"
+files = [
+    {file = "novu-1.14.0-py3-none-any.whl", hash = "sha256:fc152604257f7b7de7bcd818b98191eda6fddfd48d264a2d2ec22c5d70dfc78f"},
+    {file = "novu-1.14.0.tar.gz", hash = "sha256:51b175b2c692382e751cbb483fcd2289f4ed8345a78befa78a2730fe69ecd31d"},
+]
+
+[package.dependencies]
+requests = ">=2.28.2,<3.0.0"
+
+[[package]]
 name = "numpy"
 version = "1.26.4"
 description = "Fundamental package for array computing in Python"
@@ -3715,4 +3729,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "8fc6fd73147d4e46a0f1f01790ea6c41ca59ff499778f2ba32c10fd1d0924e2f"
+content-hash = "ab0be10c69e09c7e081a5afb15f6f145624ed45afe86b34583a021c559995a0b"
