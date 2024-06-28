@@ -37,7 +37,6 @@ def clear_firestore_data():
         doc.reference.delete()
 
 
-
 # Function to delete all users from Firebase Authentication
 def delete_all_auth_users():
     user_list = auth.list_users().iterate_all()

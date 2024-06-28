@@ -2114,7 +2114,6 @@ typing-extensions = ">=4.7,<5"
 datalib = ["numpy (>=1)", "pandas (>=1.2.3)", "pandas-stubs (>=1.1.0.11)"]
 
 [[package]]
-
 name = "orjson"
 version = "3.10.4"
 description = "Fast, correct Python JSON library supporting dataclasses, datetimes, and numpy"
@@ -3633,4 +3632,3 @@ multidict = ">=4.0"
 lock-version = "2.0"
 python-versions = "^3.12"
 content-hash = "f6df9dfd0b6e8f11a83012cb5391594eb4731521867a0a29d37ad9a380c1593c"
-

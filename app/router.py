@@ -2,7 +2,6 @@ from typing import Annotated
 from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
-
 from fastapi.exceptions import HTTPException
 from firebase_admin import auth
 from dotenv import load_dotenv
@@ -171,6 +170,7 @@ def create_illustration(base: BaseBody, userId: str, brandId: str):
 def update_brand_details(base: BaseBody, userId: str, brandId: str):
     return brand_service.update_brand_details(base, brandId, userId)
 
+  
 @router.get("/users/{userId}/brands", tags=["User"])
 def get_all_user_brand(userId: str):
     return user_Service.get_user_brands(userId)
@@ -191,4 +191,3 @@ async def login(user: UserInput):
 @router.post("/signup", tags=["Authentication"])
 async def signup(user: UserInput):
     return user_Service.user_register(user)
-
