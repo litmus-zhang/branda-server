@@ -1,23 +1,23 @@
 from fastapi import HTTPException, status
 from fastapi.responses import JSONResponse
 from models.schemas import UserInput
-from firebase_admin import auth
-from firebase_admin.auth import UserRecord
-from firebase_admin import firestore
 
 
 class UserService:
     def __init__(self):
-        self.db = firestore.client()
+        self.db = ""
 
     def get_user(self, user_id: str):
-        return auth.get_user(user_id)
+        # Check if user exists
+        # if user exists, return user data
+        # else raise an exception
+        return JSONResponse(
+            content={"message": "User received successfully", "data": "user"}
+        )
 
     def get_user_brands(self, user_id: str):
         try:
-            all_user_brands = (
-                self.db.collection("brands").where("userId", "==", user_id).stream()
-            )
+            all_user_brands = "Hello from user_service.py get_user_brands method"
             user_brands = [brand.to_dict() for brand in all_user_brands]
             return JSONResponse(
                 content={
@@ -32,28 +32,28 @@ class UserService:
 
     def user_register(self, user: UserInput):
         try:
-            get_user = auth.get_user_by_email(email=user.email)
-            if get_user:
-                raise HTTPException(
-                    detail={"message": "User already exists"},
-                    status_code=status.HTTP_409_CONFLICT,
-                )
-        except auth.UserNotFoundError:
-
-            auth.create_user(email=user.email, password=user.password)
+            # Check if user already exists
+            # if user exists, raise an exception
+            # else create a new user
             return JSONResponse(
-                content={"message": "User registration successful"},
+                content={"message": "User registered successfully"},
                 status_code=status.HTTP_201_CREATED,
             )
+        except Exception:
+            raise HTTPException(
+                detail={"message": "Error registering user"}, status_code=404
+            ) from None
 
     def user_login(self, user: UserInput):
         try:
-            user = auth.get_user_by_email(email=user.email)
+            # Check if user exists
+            # if user exists, return a token nd a message
+            # else raise an exception
             return JSONResponse(
-                content={"message": "User login successful"},
+                content={"message": "User login successful", "token": "token"},
                 status_code=status.HTTP_200_OK,
             )
-        except auth.UserNotFoundError:
+        except Exception:
             raise HTTPException(
                 detail={"message": "User not found"},
                 status_code=status.HTTP_404_NOT_FOUND,

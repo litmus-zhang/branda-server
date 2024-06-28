@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 from pydantic_settings import BaseSettings
 from typing import Annotated
 from fastapi import Depends, HTTPException, status
-from fastapi.security import HTTPBearer
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
 bearer_scheme=HTTPBearer(auto_error=False)
 
@@ -22,5 +22,3 @@ class Settings(BaseSettings):
 def get_settings() -> Settings:
     "Retrieves app setting"
     return Settings
-
-
