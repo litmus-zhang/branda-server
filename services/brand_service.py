@@ -7,12 +7,11 @@ from fastapi.responses import JSONResponse
 from fastapi import HTTPException
 
 # from .user_service import db
-from firebase_admin import firestore
 
 
 class BrandService:
     def __init__(self):
-        self.db = firestore.client()
+        self.db = "firestore.client()"
 
     def get_brand_name(self, base: Base):
         response = lch.generate_brand_name(niche=base.niche, industry=base.industry)
@@ -64,9 +63,7 @@ class BrandService:
     def store_brand_name(self, base: BaseBody, userId: str):
         try:
 
-            _, brand_col = self.db.collection("brands").add(
-                {"name": base.name, "userId": userId}
-            )
+            _, brand_col = {id: "brandId"}
 
             return JSONResponse(
                 content={
@@ -83,8 +80,7 @@ class BrandService:
 
     def store_font(self, base: BaseBody, userId: str, brandId: str):
         try:
-            brandCol = self.db.collection("brands").document(brandId)
-            brandCol.update({"font": base.font, "userId": userId})
+
             return JSONResponse(
                 content={
                     "message": "Brand font saved successfully",
@@ -98,8 +94,7 @@ class BrandService:
 
     def store_color_pallete(self, base: BaseBody, brandId: str, userId: str):
         try:
-            brandCol = self.db.collection("brands").document(brandId)
-            brandCol.update({"color": base.color, "userId": userId})
+
             return JSONResponse(
                 content={"message": "Brand color saved successfully"},
                 status_code=201,
@@ -111,8 +106,6 @@ class BrandService:
 
     def store_brand_messaging(self, base: BaseBody, brandId: str, userId: str):
         try:
-            brandCol = self.db.collection("brands").document(brandId)
-            brandCol.update({"messaging": base.messaging, "userId": userId})
             return JSONResponse(
                 content={"message": "Brand messaging saved successfully"},
                 status_code=201,
@@ -124,8 +117,7 @@ class BrandService:
 
     def store_brand_strategy(self, base: BaseBody, brandId: str, userId: str):
         try:
-            brandCol = self.db.collection("brands").document(brandId)
-            brandCol.update({"strategy": base.strategy, "userId": userId})
+
             return JSONResponse(
                 content={"message": "Brand strategy saved successfully"},
                 status_code=201,
@@ -137,8 +129,7 @@ class BrandService:
 
     def store_brand_logo(self, base: BaseBody, brandId: str, userId: str):
         try:
-            brandCol = self.db.collection("brands").document(brandId)
-            brandCol.update({"logo": base.logo, "userId": userId})
+
             return JSONResponse(
                 content={"message": "Brand logo saved successfully"},
                 status_code=201,
@@ -150,8 +141,6 @@ class BrandService:
 
     def store_brand_photography(self, base: BaseBody, brandId: str, userId: str):
         try:
-            brandCol = self.db.collection("brands").document(brandId)
-            brandCol.update({"photography": base.photography, "userId": userId})
             return JSONResponse(
                 content={"message": "Brand photography saved successfully"},
                 status_code=201,
@@ -163,8 +152,7 @@ class BrandService:
 
     def store_brand_illustration(self, base: BaseBody, brandId: str, userId: str):
         try:
-            brandCol = self.db.collection("brands").document(brandId)
-            brandCol.update({"illustration": base.illustration, "userId": userId})
+
             return JSONResponse(
                 content={"message": "Brand illustration saved successfully"},
                 status_code=201,
@@ -176,8 +164,6 @@ class BrandService:
 
     def store_brand_presentation(self, base: BaseBody, brandId: str, userId: str):
         try:
-            brandCol = self.db.collection("brands").document(brandId)
-            brandCol.update({"presentation": base.illustration, "userId": userId})
             return JSONResponse(
                 content={"message": "Brand presentation saved successfully"},
                 status_code=201,
@@ -189,21 +175,6 @@ class BrandService:
 
     def update_brand_details(self, base: BaseBody, brandId: str, userId: str):
         try:
-            brandCol = self.db.collection("brands").document(brandId)
-            brandCol.update(
-                {
-                    "name": base.name,
-                    "font": base.font,
-                    "color": base.color,
-                    "messaging": base.messaging,
-                    "strategy": base.strategy,
-                    "logo": base.logo,
-                    "photography": base.photography,
-                    "illustration": base.illustration,
-                    "presentation": base.presentation,
-                    "userId": userId,
-                }
-            )
             return JSONResponse(
                 content={"message": "Brand details updated successfully"},
                 status_code=201,
