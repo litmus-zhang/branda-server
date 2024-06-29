@@ -2,9 +2,11 @@ from typing import Annotated
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import JSONResponse
 
-from models.schemas import UserInput
+from config.database import get_db
+from models.schemas import UserInput, UserRegister
 from services.auth_service import JWTBearer
 from services.user_service import UserService
+from sqlalchemy.orm import Session
 
 user_router = APIRouter(tags=["User"], dependencies=[Depends(JWTBearer())])
 
@@ -24,30 +26,23 @@ def get_current_user(token: str) -> dict | None:
         raise HTTPException(status_code=401, detail="Invalid credentials") from exc
 
 
-def check_user(data: UserInput):
-    try:
-        user = user_Service.get_user(data.email)
-        if user:
-            return JSONResponse(
-                content={"message": "User received successfully", "data": "user"}
-            )
-        else:
-            raise HTTPException(status_code=404, detail="User not found")
-    except Exception as exc:
-        raise HTTPException(status_code=404, detail="Error getting data") from exc
-
-
 @user_router.get("/users/me")
 async def get_user_id(user: Annotated[dict, Depends(get_current_user)]):
     return {"userId": user}
 
 
 @user_router.get("/users/{userId}/brands", tags=["User"])
-def get_all_user_brand(userId: str):
-    return user_Service.get_user_brands(userId)
+def get_all_user_brand(userId: str, db: Session = Depends(get_db)):
+    return user_Service.get_user_brands(userId, db=db)
 
 
 @user_router.get("/users/me")
-def get_user_details(userId: str):
-    data = "User data fetched successfully"
+def get_user_details(userId: str, db: Session = Depends(get_db)):
+    data = user_Service.get_user(userId, db)
     return JSONResponse(content={"message": "Fetched users data", "data": data})
+
+
+@user_router.patch("/users/{userId}")
+def update_user_details(userId: str, data: UserRegister, db: Session = Depends(get_db)):
+    data = user_Service.update_user(userId, data, db)
+    return JSONResponse(content={"message": "Updated users data", "data": data})

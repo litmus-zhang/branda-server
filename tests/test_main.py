@@ -1,7 +1,7 @@
 from fastapi.testclient import TestClient
 from app.main import app
 import pytest
-from config.firebase import clear_firestore_data, delete_all_auth_users
+from config.database import clear_firestore_data, delete_all_auth_users
 
 
 client = TestClient(app, base_url="http://localhost:8000/api/v1")

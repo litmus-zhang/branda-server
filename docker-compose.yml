@@ -2,28 +2,29 @@ version: '3.1'
 
 
 services:
- mainDB:
-  image: postgres:15.0
-  container_name: mainDB
-  ports:
-   - "8001:5432"
-  environment:
-    - POSTGRES_USER=branda
-    - POSTGRES_PASSWORD=branda
-    - POSTGRES_DB=branda
-  volumes:
-    - ./data:/var/lib/postgresql/data
-  testDB:
+  brandaMainDB:
     image: postgres:15.0
-    container_name: testDB
+    container_name: brandaMainDB
     ports:
     - "8001:5432"
     environment:
-      - POSTGRES_USER=test
-      - POSTGRES_PASSWORD=test
-      - POSTGRES_DB=test
+      - POSTGRES_USER=branda
+      - POSTGRES_PASSWORD=branda
+      - POSTGRES_DB=branda
     volumes:
-      - ./test:/var/lib/postgresql/data
+      - ./data:/var/lib/postgresql/data
+  brandaTestDB:
+    image: postgres:15.0
+    container_name: brandaTestDB
+    ports:
+      - "8002:5432"
+    environment:
+        - POSTGRES_USER=test
+        - POSTGRES_PASSWORD=test
+        - POSTGRES_DB=test
+    volumes:
+        - ./test:/var/lib/postgresql/data
 
 volumes:
   data:
+  test:

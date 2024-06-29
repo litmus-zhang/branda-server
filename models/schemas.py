@@ -46,3 +46,32 @@ class LogoVariant(BaseModel):
 
 class Logo(BaseModel):
     variants: list[LogoVariant]
+
+
+class User(BaseModel):
+    id: int
+    firstname: str
+    lastname: str
+    email: str
+    hashed_password: str
+    is_active: bool
+
+    class Config:
+        from_attributes = True
+
+
+class Brand(BaseModel):
+    id: int
+    name: str
+    font: str
+    strategy: str
+    color: list[str]
+    logo: str
+    messaging: str
+    photography: str
+    illustration: str
+    presentation: str
+    owner_id: int
+
+    class Config:
+        from_attributes = True

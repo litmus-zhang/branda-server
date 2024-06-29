@@ -1,8 +1,11 @@
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi.responses import JSONResponse
+from config.database import get_db
 from models.schemas import BaseBody, Base, Strategy
 from services.brand_service import BrandService
 from services.auth_service import JWTBearer
+from sqlalchemy.orm import Session
+
 
 brand_service = BrandService()
 
@@ -21,8 +24,10 @@ async def get_font():
 
 
 @brand_router.post("/users/{userId}/brands/{brandId}/font")
-async def create_font(base: BaseBody, userId: str, brandId: str):
-    return brand_service.store_font(base, userId, brandId)
+async def create_font(
+    base: BaseBody, userId: str, brandId: str, db: Session = Depends(get_db)
+):
+    return brand_service.store_font(base, userId, brandId, db=db)
 
 
 @brand_router.get("/color")
@@ -37,8 +42,10 @@ async def get_color_pallete(base: Base):
 
 
 @brand_router.post("/users/{userId}/brands/{brandId}/color")
-async def create_color_pallete(base: BaseBody, userId: str, brandId: str):
-    return brand_service.store_color_pallete(base, brandId, userId)
+async def create_color_pallete(
+    base: BaseBody, userId: str, brandId: str, db: Session = Depends(get_db)
+):
+    return brand_service.store_color_pallete(base, brandId, userId, db=db)
 
 
 @brand_router.get("/messaging")
@@ -50,12 +57,14 @@ def get_brand_messaging(base: Base):
             content={"message": "Brand messaging received Successfully", "data": data}
         )
     except Exception as exc:
-        raise HTTPException(status_code=404, detail="Error getting data") from exc
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
 
 
 @brand_router.post("/users/{userId}/brands/{brandId}/messaging")
-def create_brand_messaging(base: BaseBody, userId: str, brandId: str):
-    return brand_service.store_brand_messaging(base, brandId, userId)
+def create_brand_messaging(
+    base: BaseBody, userId: str, brandId: str, db: Session = Depends(get_db)
+):
+    return brand_service.store_brand_messaging(base, brandId, userId, db=db)
 
 
 @brand_router.get("/strategy")
@@ -66,12 +75,14 @@ def get_brand_strategy(brand_strategy: Strategy):
             content={"message": "Brand strategy received successfully", "data": data}
         )
     except Exception as exc:
-        raise HTTPException(status_code=404, detail="Error getting data") from exc
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
 
 
 @brand_router.post("/users/{userId}/brands/{brandId}/strategy")
-def create_brand_strategy(brand_strategy: BaseBody, userId: str, brandId: str):
-    return brand_service.store_brand_strategy(brand_strategy, brandId, userId)
+def create_brand_strategy(
+    brand_strategy: BaseBody, userId: str, brandId: str, db: Session = Depends(get_db)
+):
+    return brand_service.store_brand_strategy(brand_strategy, brandId, userId, db=db)
 
 
 @brand_router.get("/brand_name")
@@ -82,12 +93,12 @@ def get_brand_name(base: Base):
             content={"message": "Brand names fetched successfully", "data": data}
         )
     except Exception as exc:
-        raise HTTPException(status_code=404, detail="Error getting data") from exc
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
 
 
 @brand_router.post("/users/{userId}/brands/brand_name", status_code=201)
-def post_brand_name(base: BaseBody, userId: str):
-    return brand_service.store_brand_name(base, userId)
+def post_brand_name(base: BaseBody, userId: str, db: Session = Depends(get_db)):
+    return brand_service.store_brand_name(base, userId, db=db)
 
 
 @brand_router.get("/logo")
@@ -96,12 +107,14 @@ def get_logo(base: Base):
         return brand_service.get_logo(base)
 
     except Exception as exc:
-        raise HTTPException(status_code=404, detail="Error getting data") from exc
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
 
 
 @brand_router.post("/users/{userId}/brands/{brandId}/logo")
-def create_logo(base: BaseBody, userId: str, brandId: str):
-    return brand_service.store_brand_logo(base, brandId, userId)
+def create_logo(
+    base: BaseBody, userId: str, brandId: str, db: Session = Depends(get_db)
+):
+    return brand_service.store_brand_logo(base, brandId, userId, db=db)
 
 
 @brand_router.get("/photography")
@@ -109,12 +122,14 @@ def get_photography(base: Base):
     try:
         return brand_service.get_photography(base)
     except Exception as exc:
-        raise HTTPException(status_code=404, detail="Error getting data") from exc
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
 
 
 @brand_router.post("/users/{userId}/brands/{brandId}/photography")
-def create_photography(base: BaseBody, userId: str, brandId: str):
-    return brand_service.store_brand_photography(base, brandId, userId)
+def create_photography(
+    base: BaseBody, userId: str, brandId: str, db: Session = Depends(get_db)
+):
+    return brand_service.store_brand_photography(base, brandId, userId, db=db)
 
 
 @brand_router.get("/illustration")
@@ -122,14 +137,18 @@ def get_illustration(base: Base):
     try:
         return brand_service.get_illustration(base)
     except Exception as exc:
-        raise HTTPException(status_code=404, detail="Error getting data") from exc
+        raise HTTPException(status_code=404, detail=str(exc)) from exc
 
 
 @brand_router.post("/users/{userId}/brands/{brandId}/illustration")
-def create_illustration(base: BaseBody, userId: str, brandId: str):
-    return brand_service.store_brand_illustration(base, brandId, userId)
+def create_illustration(
+    base: BaseBody, userId: str, brandId: str, db: Session = Depends(get_db)
+):
+    return brand_service.store_brand_illustration(base, brandId, userId, db=db)
 
 
 @brand_router.put("/users/{userId}/brands/{brandId}")
-def update_brand_details(base: BaseBody, userId: str, brandId: str):
-    return brand_service.update_brand_details(base, brandId, userId)
+def update_brand_details(
+    base: BaseBody, userId: str, brandId: str, db: Session = Depends(get_db)
+):
+    return brand_service.update_brand_details(base, brandId, userId, db=db)

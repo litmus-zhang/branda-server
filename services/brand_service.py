@@ -1,18 +1,16 @@
 import os
 import requests
 import random
+from config.database import get_db
+from models import models
 from models.schemas import Base, Strategy, BaseBody
 import config.langchain_helper as lch
 from fastapi.responses import JSONResponse
-from fastapi import HTTPException
-
-# from .user_service import db
+from fastapi import Depends, HTTPException
+from sqlalchemy.orm import Session
 
 
 class BrandService:
-    def __init__(self):
-        self.db = "firestore.client()"
-
     def get_brand_name(self, base: Base):
         response = lch.generate_brand_name(niche=base.niche, industry=base.industry)
         return response
@@ -60,15 +58,17 @@ class BrandService:
         response = lch.generate_pattern(industry=base.industry)
         return response
 
-    def store_brand_name(self, base: BaseBody, userId: str):
+    def store_brand_name(
+        self, base: BaseBody, userId: str, db: Session = Depends(get_db)
+    ):
         try:
 
-            _, brand_col = {id: "brandId"}
+            new_brand = db.add(models.Brand(name=base.name, owner_id=userId))
 
             return JSONResponse(
                 content={
                     "message": "Brand name saved successfully",
-                    "data": {"brand Id": brand_col.id},
+                    "data": {"brand Id": new_brand.id},
                 },
                 status_code=201,
             )
@@ -78,8 +78,13 @@ class BrandService:
                 detail={"message": "Error storing data"}, status_code=404
             ) from exc
 
-    def store_font(self, base: BaseBody, userId: str, brandId: str):
+    def store_font(
+        self, base: BaseBody, userId: str, brandId: str, db: Session = Depends(get_db)
+    ):
         try:
+            db.query(models.Brand).filter(models.Brand.id == brandId).update(
+                {"font": base.font}
+            )
 
             return JSONResponse(
                 content={
@@ -92,8 +97,13 @@ class BrandService:
                 detail={"message": "Error storing data"}, status_code=404
             ) from exc
 
-    def store_color_pallete(self, base: BaseBody, brandId: str, userId: str):
+    def store_color_pallete(
+        self, base: BaseBody, brandId: str, userId: str, db: Session = Depends(get_db)
+    ):
         try:
+            db.query(models.Brand).filter(models.Brand.id == brandId).update(
+                {"color": base.color}
+            )
 
             return JSONResponse(
                 content={"message": "Brand color saved successfully"},
@@ -104,8 +114,13 @@ class BrandService:
                 detail={"message": "Error storing data"}, status_code=404
             ) from exc
 
-    def store_brand_messaging(self, base: BaseBody, brandId: str, userId: str):
+    def store_brand_messaging(
+        self, base: BaseBody, brandId: str, userId: str, db: Session = Depends(get_db)
+    ):
         try:
+            db.query(models.Brand).filter(models.Brand.id == brandId).update(
+                {"messaging": base.messaging}
+            )
             return JSONResponse(
                 content={"message": "Brand messaging saved successfully"},
                 status_code=201,
@@ -115,9 +130,13 @@ class BrandService:
                 detail={"message": "Error storing data"}, status_code=404
             ) from exc
 
-    def store_brand_strategy(self, base: BaseBody, brandId: str, userId: str):
+    def store_brand_strategy(
+        self, base: BaseBody, brandId: str, userId: str, db: Session = Depends(get_db)
+    ):
         try:
-
+            db.query(models.Brand).filter(models.Brand.id == brandId).update(
+                {"strategy": base.strategy}
+            )
             return JSONResponse(
                 content={"message": "Brand strategy saved successfully"},
                 status_code=201,
@@ -127,8 +146,13 @@ class BrandService:
                 detail={"message": "Error storing data"}, status_code=404
             ) from exc
 
-    def store_brand_logo(self, base: BaseBody, brandId: str, userId: str):
+    def store_brand_logo(
+        self, base: BaseBody, brandId: str, userId: str, db: Session = Depends(get_db)
+    ):
         try:
+            db.query(models.Brand).filter(models.Brand.id == brandId).update(
+                {"logo": base.logo}
+            )
 
             return JSONResponse(
                 content={"message": "Brand logo saved successfully"},
@@ -139,8 +163,13 @@ class BrandService:
                 detail={"message": "Error storing data"}, status_code=404
             ) from exc
 
-    def store_brand_photography(self, base: BaseBody, brandId: str, userId: str):
+    def store_brand_photography(
+        self, base: BaseBody, brandId: str, userId: str, db: Session = Depends(get_db)
+    ):
         try:
+            db.query(models.Brand).filter(models.Brand.id == brandId).update(
+                {"photography": base.photography}
+            )
             return JSONResponse(
                 content={"message": "Brand photography saved successfully"},
                 status_code=201,
@@ -150,8 +179,13 @@ class BrandService:
                 detail={"message": "Error storing data"}, status_code=404
             ) from exc
 
-    def store_brand_illustration(self, base: BaseBody, brandId: str, userId: str):
+    def store_brand_illustration(
+        self, base: BaseBody, brandId: str, userId: str, db: Session = Depends(get_db)
+    ):
         try:
+            db.query(models.Brand).filter(models.Brand.id == brandId).update(
+                {"illustration": base.illustration}
+            )
 
             return JSONResponse(
                 content={"message": "Brand illustration saved successfully"},
@@ -162,8 +196,13 @@ class BrandService:
                 detail={"message": "Error storing data"}, status_code=404
             ) from exc
 
-    def store_brand_presentation(self, base: BaseBody, brandId: str, userId: str):
+    def store_brand_presentation(
+        self, base: BaseBody, brandId: str, userId: str, db: Session = Depends(get_db)
+    ):
         try:
+            db.query(models.Brand).filter(models.Brand.id == brandId).update(
+                {"presentation": base.presentation}
+            )
             return JSONResponse(
                 content={"message": "Brand presentation saved successfully"},
                 status_code=201,
@@ -173,8 +212,23 @@ class BrandService:
                 detail={"message": "Error storing data"}, status_code=404
             ) from exc
 
-    def update_brand_details(self, base: BaseBody, brandId: str, userId: str):
+    def update_brand_details(
+        self, base: BaseBody, brandId: str, userId: str, db: Session
+    ):
         try:
+            db.query(models.Brand).filter(models.Brand.id == brandId).update(
+                {
+                    "name": base.name,
+                    "font": base.font,
+                    "strategy": base.strategy,
+                    "color": base.color,
+                    "logo": base.logo,
+                    "messaging": base.messaging,
+                    "photography": base.photography,
+                    "illustration": base.illustration,
+                    "presentation": base.presentation,
+                }
+            )
             return JSONResponse(
                 content={"message": "Brand details updated successfully"},
                 status_code=201,

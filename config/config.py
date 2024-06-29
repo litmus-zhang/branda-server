@@ -3,9 +3,8 @@ import pathlib
 from functools import lru_cache
 from dotenv import load_dotenv
 from pydantic_settings import BaseSettings
-from typing import Annotated
-from fastapi import Depends, HTTPException, status
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from fastapi.security import HTTPBearer
+import sqlalchemy
 
 bearer_scheme = HTTPBearer(auto_error=False)
 
