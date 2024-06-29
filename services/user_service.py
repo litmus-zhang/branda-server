@@ -30,31 +30,4 @@ class UserService:
                 detail={"message": "Error getting data"}, status_code=404
             ) from exc
 
-    def user_register(self, user: UserInput):
-        try:
-            # Check if user already exists
-            # if user exists, raise an exception
-            # else create a new user
-            return JSONResponse(
-                content={"message": "User registered successfully"},
-                status_code=status.HTTP_201_CREATED,
-            )
-        except Exception:
-            raise HTTPException(
-                detail={"message": "Error registering user"}, status_code=404
-            ) from None
-
-    def user_login(self, user: UserInput):
-        try:
-            # Check if user exists
-            # if user exists, return a token nd a message
-            # else raise an exception
-            return JSONResponse(
-                content={"message": "User login successful", "token": "token"},
-                status_code=status.HTTP_200_OK,
-            )
-        except Exception:
-            raise HTTPException(
-                detail={"message": "User not found"},
-                status_code=status.HTTP_404_NOT_FOUND,
-            ) from None
+   

@@ -17,8 +17,10 @@ langchain-google-genai = "^1.0.6"
 markdown = "^3.6"
 passlib = "^1.7.4"
 langchain-openai = "^0.1.8"
-pydantic = "^2.7.4"
+pydantic = {extras = ["email"], version = "^2.7.4"}
 pydantic-settings = "^2.3.4"
+pyjwt = "2.8.0"
+python-decouple = "3.8"
 
 
 [tool.poetry.group.dev.dependencies]
