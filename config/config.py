@@ -7,16 +7,18 @@ from typing import Annotated
 from fastapi import Depends, HTTPException, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 
-bearer_scheme=HTTPBearer(auto_error=False)
+bearer_scheme = HTTPBearer(auto_error=False)
 
 basedir = pathlib.Path(__file__).parents[1]
-load_dotenv(basedir/".env")
+load_dotenv(basedir / ".env")
+
 
 class Settings(BaseSettings):
     "Main settings"
     app_name: str = "branda-firebase"
     env: str = os.getenv("ENV", "developement")
     frontend_url: str = os.getenv("FRONTEND_URL", "NA")
+
 
 @lru_cache
 def get_settings() -> Settings:
