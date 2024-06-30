@@ -1,4 +1,4 @@
-from typing import Annotated
+from typing import Annotated, Tuple
 from fastapi import APIRouter, Depends
 from fastapi.responses import JSONResponse
 
@@ -8,6 +8,8 @@ from services.auth_handler import decode_jwt
 from services.auth_service import JWTBearer
 from services.user_service import UserService
 from sqlalchemy.orm import Session
+
+from utils.db_access import pagination
 
 user_router = APIRouter(tags=["User"], dependencies=[Depends(JWTBearer())])
 
@@ -23,9 +25,11 @@ def get_current_user(
 
 @user_router.get("/users/brands", tags=["User"])
 def get_all_user_brand(
-    user: Annotated[User, Depends(get_current_user)], db: Session = Depends(get_db)
+    user: Annotated[User, Depends(get_current_user)],
+    db: Session = Depends(get_db),
+    paginate: Tuple[int, int] = Depends(pagination),
 ):
-    return user_Service.get_user_brands(user_id=user["id"], db=db)
+    return user_Service.get_user_brands(user_id=user["id"], db=db, p=paginate)
 
 
 @user_router.get("/users/me")

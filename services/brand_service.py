@@ -83,6 +83,7 @@ class BrandService:
             db.query(models.Brand).filter(models.Brand.id == brandId).update(
                 {"font": base.font}
             )
+            db.commit()
 
             return JSONResponse(
                 content={
@@ -91,9 +92,7 @@ class BrandService:
                 status_code=201,
             )
         except Exception as exc:
-            raise HTTPException(
-                detail={"message": "Error storing data"}, status_code=404
-            ) from exc
+            raise HTTPException(detail={"message": str(exc)}, status_code=404) from exc
 
     def store_color_pallete(
         self, base: BaseBody, brandId: str, db: Session = Depends(get_db)
@@ -102,15 +101,14 @@ class BrandService:
             db.query(models.Brand).filter(models.Brand.id == brandId).update(
                 {"color": base.color}
             )
+            db.commit()
 
             return JSONResponse(
                 content={"message": "Brand color saved successfully"},
                 status_code=201,
             )
         except Exception as exc:
-            raise HTTPException(
-                detail={"message": "Error storing data"}, status_code=404
-            ) from exc
+            raise HTTPException(detail={"message": str(exc)}, status_code=404) from exc
 
     def store_brand_messaging(
         self, base: BaseBody, brandId: str, db: Session = Depends(get_db)
@@ -119,14 +117,13 @@ class BrandService:
             db.query(models.Brand).filter(models.Brand.id == brandId).update(
                 {"messaging": base.messaging}
             )
+            db.commit()
             return JSONResponse(
                 content={"message": "Brand messaging saved successfully"},
                 status_code=201,
             )
         except Exception as exc:
-            raise HTTPException(
-                detail={"message": "Error storing data"}, status_code=404
-            ) from exc
+            raise HTTPException(detail={"message": str(exc)}, status_code=404) from exc
 
     def store_brand_strategy(
         self, base: BaseBody, brandId: str, db: Session = Depends(get_db)
@@ -135,14 +132,13 @@ class BrandService:
             db.query(models.Brand).filter(models.Brand.id == brandId).update(
                 {"strategy": base.strategy}
             )
+            db.commit()
             return JSONResponse(
                 content={"message": "Brand strategy saved successfully"},
                 status_code=201,
             )
         except Exception as exc:
-            raise HTTPException(
-                detail={"message": "Error storing data"}, status_code=404
-            ) from exc
+            raise HTTPException(detail={"message": str(exc)}, status_code=404) from exc
 
     def store_brand_logo(
         self, base: BaseBody, brandId: str, db: Session = Depends(get_db)
@@ -151,15 +147,14 @@ class BrandService:
             db.query(models.Brand).filter(models.Brand.id == brandId).update(
                 {"logo": base.logo}
             )
+            db.commit()
 
             return JSONResponse(
                 content={"message": "Brand logo saved successfully"},
                 status_code=201,
             )
         except Exception as exc:
-            raise HTTPException(
-                detail={"message": "Error storing data"}, status_code=404
-            ) from exc
+            raise HTTPException(detail={"message": str(exc)}, status_code=404) from exc
 
     def store_brand_photography(
         self, base: BaseBody, brandId: str, db: Session = Depends(get_db)
@@ -168,14 +163,13 @@ class BrandService:
             db.query(models.Brand).filter(models.Brand.id == brandId).update(
                 {"photography": base.photography}
             )
+            db.commit()
             return JSONResponse(
                 content={"message": "Brand photography saved successfully"},
                 status_code=201,
             )
         except Exception as exc:
-            raise HTTPException(
-                detail={"message": "Error storing data"}, status_code=404
-            ) from exc
+            raise HTTPException(detail={"message": str(exc)}, status_code=404) from exc
 
     def store_brand_illustration(
         self, base: BaseBody, brandId: str, db: Session = Depends(get_db)
@@ -184,15 +178,14 @@ class BrandService:
             db.query(models.Brand).filter(models.Brand.id == brandId).update(
                 {"illustration": base.illustration}
             )
+            db.commit()
 
             return JSONResponse(
                 content={"message": "Brand illustration saved successfully"},
                 status_code=201,
             )
         except Exception as exc:
-            raise HTTPException(
-                detail={"message": "Error storing data"}, status_code=404
-            ) from exc
+            raise HTTPException(detail={"message": str(exc)}, status_code=404) from exc
 
     def store_brand_presentation(
         self, base: BaseBody, brandId: str, userId: str, db: Session = Depends(get_db)
@@ -201,14 +194,13 @@ class BrandService:
             db.query(models.Brand).filter(models.Brand.id == brandId).update(
                 {"presentation": base.presentation}
             )
+            db.commit()
             return JSONResponse(
                 content={"message": "Brand presentation saved successfully"},
                 status_code=201,
             )
         except Exception as exc:
-            raise HTTPException(
-                detail={"message": "Error storing data"}, status_code=404
-            ) from exc
+            raise HTTPException(detail={"message": str(exc)}, status_code=404) from exc
 
     def update_brand_details(
         self, base: BaseBody, brandId: str, userId: str, db: Session
@@ -227,11 +219,10 @@ class BrandService:
                     "presentation": base.presentation,
                 }
             )
+            db.commit()
             return JSONResponse(
                 content={"message": "Brand details updated successfully"},
                 status_code=201,
             )
         except Exception as exc:
-            raise HTTPException(
-                detail={"message": "Error updating data"}, status_code=404
-            ) from exc
+            raise HTTPException(detail={"message": str(exc)}, status_code=404) from exc

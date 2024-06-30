@@ -41,7 +41,7 @@ async def get_color_pallete(base: Base):
         raise HTTPException(status_code=404, detail="Error getting data") from exc
 
 
-@brand_router.post("/users/{userId}/brands/{brandId}/color")
+@brand_router.post("/users/brands/{brandId}/color")
 async def create_color_pallete(
     base: BaseBody, brandId: str, db: Session = Depends(get_db)
 ):
@@ -76,7 +76,7 @@ def get_brand_strategy(brand_strategy: Strategy):
         raise HTTPException(status_code=404, detail=str(exc)) from exc
 
 
-@brand_router.post("/users/{userId}/brands/{brandId}/strategy")
+@brand_router.post("/users/brands/{brandId}/strategy")
 def create_brand_strategy(
     brand_strategy: BaseBody, brandId: str, db: Session = Depends(get_db)
 ):
