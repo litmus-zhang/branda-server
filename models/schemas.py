@@ -1,3 +1,4 @@
+from typing import Optional
 from pydantic import BaseModel, Field, EmailStr
 
 
@@ -19,9 +20,26 @@ class UserRegister(BaseModel):
     password: str = Field(...)
 
 
+class UserUpdate(BaseModel):
+    firstname: Optional[str] = Field(...)
+    lastname: Optional[str] = Field(...)
+    email: Optional[EmailStr] = Field(...)
+    password: Optional[str] = Field(...)
+
+
 class UserInput(BaseModel):
     email: EmailStr = Field(...)
     password: str = Field(...)
+
+
+class User(BaseModel):
+    id: int
+    firstname: str
+    lastname: str
+    email: str
+
+    class Config:
+        from_attributes = True
 
 
 class BaseBody(BaseModel):
@@ -46,18 +64,6 @@ class LogoVariant(BaseModel):
 
 class Logo(BaseModel):
     variants: list[LogoVariant]
-
-
-class User(BaseModel):
-    id: int
-    firstname: str
-    lastname: str
-    email: str
-    hashed_password: str
-    is_active: bool
-
-    class Config:
-        from_attributes = True
 
 
 class Brand(BaseModel):

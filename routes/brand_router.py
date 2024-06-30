@@ -1,7 +1,9 @@
+from typing import Annotated
 from fastapi import APIRouter, HTTPException, Depends
 from fastapi.responses import JSONResponse
 from config.database import get_db
-from models.schemas import BaseBody, Base, Strategy
+from models.schemas import BaseBody, Base, Strategy, User
+from routes.user_router import get_current_user
 from services.brand_service import BrandService
 from services.auth_service import JWTBearer
 from sqlalchemy.orm import Session
@@ -23,11 +25,9 @@ async def get_font():
         raise HTTPException(status_code=404, detail="Error getting data") from exc
 
 
-@brand_router.post("/users/{userId}/brands/{brandId}/font")
-async def create_font(
-    base: BaseBody, userId: str, brandId: str, db: Session = Depends(get_db)
-):
-    return brand_service.store_font(base, userId, brandId, db=db)
+@brand_router.post("/users/brands/{brandId}/font")
+async def create_font(base: BaseBody, brandId: str, db: Session = Depends(get_db)):
+    return brand_service.store_font(base, brandId, db=db)
 
 
 @brand_router.get("/color")
@@ -43,9 +43,9 @@ async def get_color_pallete(base: Base):
 
 @brand_router.post("/users/{userId}/brands/{brandId}/color")
 async def create_color_pallete(
-    base: BaseBody, userId: str, brandId: str, db: Session = Depends(get_db)
+    base: BaseBody, brandId: str, db: Session = Depends(get_db)
 ):
-    return brand_service.store_color_pallete(base, brandId, userId, db=db)
+    return brand_service.store_color_pallete(base, brandId, db=db)
 
 
 @brand_router.get("/messaging")
@@ -60,11 +60,9 @@ def get_brand_messaging(base: Base):
         raise HTTPException(status_code=404, detail=str(exc)) from exc
 
 
-@brand_router.post("/users/{userId}/brands/{brandId}/messaging")
-def create_brand_messaging(
-    base: BaseBody, userId: str, brandId: str, db: Session = Depends(get_db)
-):
-    return brand_service.store_brand_messaging(base, brandId, userId, db=db)
+@brand_router.post("/users/brands/{brandId}/messaging")
+def create_brand_messaging(base: BaseBody, brandId: str, db: Session = Depends(get_db)):
+    return brand_service.store_brand_messaging(base, brandId, db=db)
 
 
 @brand_router.get("/strategy")
@@ -80,9 +78,9 @@ def get_brand_strategy(brand_strategy: Strategy):
 
 @brand_router.post("/users/{userId}/brands/{brandId}/strategy")
 def create_brand_strategy(
-    brand_strategy: BaseBody, userId: str, brandId: str, db: Session = Depends(get_db)
+    brand_strategy: BaseBody, brandId: str, db: Session = Depends(get_db)
 ):
-    return brand_service.store_brand_strategy(brand_strategy, brandId, userId, db=db)
+    return brand_service.store_brand_strategy(brand_strategy, brandId, db=db)
 
 
 @brand_router.get("/brand_name")
@@ -96,9 +94,14 @@ def get_brand_name(base: Base):
         raise HTTPException(status_code=404, detail=str(exc)) from exc
 
 
-@brand_router.post("/users/{userId}/brands/brand_name", status_code=201)
-def post_brand_name(base: BaseBody, userId: str, db: Session = Depends(get_db)):
-    return brand_service.store_brand_name(base, userId, db=db)
+@brand_router.post("/users/brands/brand_name", status_code=201)
+def post_brand_name(
+    base: BaseBody,
+    user: Annotated[User, Depends(get_current_user)],
+    db: Session = Depends(get_db),
+):
+    print(user, base)
+    return brand_service.store_brand_name(base, userId=user["id"], db=db)
 
 
 @brand_router.get("/logo")
@@ -110,11 +113,9 @@ def get_logo(base: Base):
         raise HTTPException(status_code=404, detail=str(exc)) from exc
 
 
-@brand_router.post("/users/{userId}/brands/{brandId}/logo")
-def create_logo(
-    base: BaseBody, userId: str, brandId: str, db: Session = Depends(get_db)
-):
-    return brand_service.store_brand_logo(base, brandId, userId, db=db)
+@brand_router.post("/users/brands/{brandId}/logo")
+def create_logo(base: BaseBody, brandId: str, db: Session = Depends(get_db)):
+    return brand_service.store_brand_logo(base, brandId, db=db)
 
 
 @brand_router.get("/photography")
@@ -125,11 +126,9 @@ def get_photography(base: Base):
         raise HTTPException(status_code=404, detail=str(exc)) from exc
 
 
-@brand_router.post("/users/{userId}/brands/{brandId}/photography")
-def create_photography(
-    base: BaseBody, userId: str, brandId: str, db: Session = Depends(get_db)
-):
-    return brand_service.store_brand_photography(base, brandId, userId, db=db)
+@brand_router.post("/users/brands/{brandId}/photography")
+def create_photography(base: BaseBody, brandId: str, db: Session = Depends(get_db)):
+    return brand_service.store_brand_photography(base, brandId, db=db)
 
 
 @brand_router.get("/illustration")
@@ -140,14 +139,12 @@ def get_illustration(base: Base):
         raise HTTPException(status_code=404, detail=str(exc)) from exc
 
 
-@brand_router.post("/users/{userId}/brands/{brandId}/illustration")
-def create_illustration(
-    base: BaseBody, userId: str, brandId: str, db: Session = Depends(get_db)
-):
-    return brand_service.store_brand_illustration(base, brandId, userId, db=db)
+@brand_router.post("/users/brands/{brandId}/illustration")
+def create_illustration(base: BaseBody, brandId: str, db: Session = Depends(get_db)):
+    return brand_service.store_brand_illustration(base, brandId, db=db)
 
 
-@brand_router.put("/users/{userId}/brands/{brandId}")
+@brand_router.put("/users/brands/{brandId}")
 def update_brand_details(
     base: BaseBody, userId: str, brandId: str, db: Session = Depends(get_db)
 ):

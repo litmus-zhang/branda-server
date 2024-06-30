@@ -1,7 +1,6 @@
 from fastapi.testclient import TestClient
 from app.main import app
 import pytest
-from config.database import clear_firestore_data, delete_all_auth_users
 
 
 client = TestClient(app, base_url="http://localhost:8000/api/v1")
@@ -10,8 +9,7 @@ client = TestClient(app, base_url="http://localhost:8000/api/v1")
 @pytest.fixture(autouse=True, scope="module")
 def clear_test_data():
     yield
-    clear_firestore_data()
-    delete_all_auth_users()
+    # clear test data
 
 
 def test_status():

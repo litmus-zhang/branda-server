@@ -59,11 +59,13 @@ class BrandService:
         return response
 
     def store_brand_name(
-        self, base: BaseBody, userId: str, db: Session = Depends(get_db)
+        self, base: BaseBody, userId: str | int, db: Session = Depends(get_db)
     ):
         try:
-
-            new_brand = db.add(models.Brand(name=base.name, owner_id=userId))
+            new_brand = models.Brand(**base.model_dump(), owner_id=int(userId))
+            db.add(new_brand)
+            db.commit()
+            db.refresh(new_brand)
 
             return JSONResponse(
                 content={
@@ -74,13 +76,9 @@ class BrandService:
             )
 
         except Exception as exc:
-            raise HTTPException(
-                detail={"message": "Error storing data"}, status_code=404
-            ) from exc
+            raise HTTPException(detail={"message": str(exc)}, status_code=404) from exc
 
-    def store_font(
-        self, base: BaseBody, userId: str, brandId: str, db: Session = Depends(get_db)
-    ):
+    def store_font(self, base: BaseBody, brandId: str, db: Session = Depends(get_db)):
         try:
             db.query(models.Brand).filter(models.Brand.id == brandId).update(
                 {"font": base.font}
@@ -98,7 +96,7 @@ class BrandService:
             ) from exc
 
     def store_color_pallete(
-        self, base: BaseBody, brandId: str, userId: str, db: Session = Depends(get_db)
+        self, base: BaseBody, brandId: str, db: Session = Depends(get_db)
     ):
         try:
             db.query(models.Brand).filter(models.Brand.id == brandId).update(
@@ -115,7 +113,7 @@ class BrandService:
             ) from exc
 
     def store_brand_messaging(
-        self, base: BaseBody, brandId: str, userId: str, db: Session = Depends(get_db)
+        self, base: BaseBody, brandId: str, db: Session = Depends(get_db)
     ):
         try:
             db.query(models.Brand).filter(models.Brand.id == brandId).update(
@@ -131,7 +129,7 @@ class BrandService:
             ) from exc
 
     def store_brand_strategy(
-        self, base: BaseBody, brandId: str, userId: str, db: Session = Depends(get_db)
+        self, base: BaseBody, brandId: str, db: Session = Depends(get_db)
     ):
         try:
             db.query(models.Brand).filter(models.Brand.id == brandId).update(
@@ -147,7 +145,7 @@ class BrandService:
             ) from exc
 
     def store_brand_logo(
-        self, base: BaseBody, brandId: str, userId: str, db: Session = Depends(get_db)
+        self, base: BaseBody, brandId: str, db: Session = Depends(get_db)
     ):
         try:
             db.query(models.Brand).filter(models.Brand.id == brandId).update(
@@ -164,7 +162,7 @@ class BrandService:
             ) from exc
 
     def store_brand_photography(
-        self, base: BaseBody, brandId: str, userId: str, db: Session = Depends(get_db)
+        self, base: BaseBody, brandId: str, db: Session = Depends(get_db)
     ):
         try:
             db.query(models.Brand).filter(models.Brand.id == brandId).update(
@@ -180,7 +178,7 @@ class BrandService:
             ) from exc
 
     def store_brand_illustration(
-        self, base: BaseBody, brandId: str, userId: str, db: Session = Depends(get_db)
+        self, base: BaseBody, brandId: str, db: Session = Depends(get_db)
     ):
         try:
             db.query(models.Brand).filter(models.Brand.id == brandId).update(

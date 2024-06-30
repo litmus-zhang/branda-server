@@ -2,46 +2,47 @@ from fastapi import HTTPException
 from fastapi.responses import JSONResponse
 import passlib
 from sqlalchemy.orm import Session
+from fastapi.encoders import jsonable_encoder
 
 from models import models
-from models.schemas import UserRegister
+from models.schemas import UserUpdate
 
 
 class UserService:
-    def update_user(self, user_id: str, data: UserRegister, db: Session):
-        # Check if user exists
-        # if user exists, update user data
-        # else raise an exception
+    def update_user(self, user_id: str, data: UserUpdate, db: Session):
         user = db.query(models.User).filter(models.User.id == user_id).first()
-        if user:
-            hashed_password = passlib.hash.bcrypt.hash(data.password)
-            updated_user = user.update(
-                **data.model_dump(exclude={"password"}), hashed_password=hashed_password
-            )
-            db.commit()
-            return JSONResponse(
-                content={
-                    "message": "User updated successfully",
-                }
-            )
-        else:
+        if not user:
+            raise HTTPException(status_code=404, detail="User not found")
+
+        if data.password:
+            user.hashed_password = passlib.hash.bcrypt.hash(data.password)
+        # Update user attributes directly
+        if data.firstname:  # Assuming you want to update firstname as well
+            user.firstname = data.firstname
+        if data.lastname:
+            user.lastname = data.lastname
+        if data.email:
+            user.email = data.email
+        db.commit()
+        return JSONResponse(
+            content={
+                "message": "User updated successfully",
+            }
+        )
+
+    def get_user(self, user_id: str, db: Session):
+        user = db.query(models.User).filter(models.User.id == user_id).first()
+        if not user:
             raise HTTPException(
                 status_code=404, detail="User not found with the given id"
             )
-
-    def get_user(self, user_id: str, db: Session):
-        # Check if user exists
-        # if user exists, return user data
-        # else raise an exception
-        user = db.query(models.User).filter(models.User.id == user_id).first()
-        return JSONResponse(
-            content={"message": "User received successfully", "data": user.to_dict()}
-        )
+        user_data = jsonable_encoder(user, exclude={"hashed_password"})
+        return user_data
 
     def get_user_brands(self, user_id: str, db: Session):
         try:
             all_user_brands = (
-                db.query(models.Brand).filter(models.Brand.user_id == user_id).all()
+                db.query(models.Brand).filter(models.Brand.owner_id == user_id).all()
             )
             return JSONResponse(
                 content={

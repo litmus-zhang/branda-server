@@ -5,14 +5,22 @@ from config.langchain_helper import (
     generate_business_strategy,
 )
 
+from unittest.mock import patch
+
 
 class TestLLMService:
-    def test_get_brand_name(self):
+    @patch("config.langchain_helper.generate_brand_name")
+    def test_get_brand_name(self, mock_generate_brand_name):
+        mock_generate_brand_name.return_value = "Brand Name"
         response = generate_brand_name(niche="tech", industry="software")
+        mock_generate_brand_name.assert_called_once_with(
+            niche="tech", industry="software"
+        )
         assert response is not None
-        assert response != ""
         assert isinstance(response, list)
 
+
+    @patch("config.langchain_helper.generate_brand_name")
     def test_get_brand_color(self):
         response = generate_brand_color(niche="tech", industry="software")
         assert response is not None

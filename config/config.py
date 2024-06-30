@@ -4,12 +4,6 @@ from functools import lru_cache
 from dotenv import load_dotenv
 from pydantic_settings import BaseSettings
 from fastapi.security import HTTPBearer
-import sqlalchemy
-
-bearer_scheme = HTTPBearer(auto_error=False)
-
-basedir = pathlib.Path(__file__).parents[1]
-load_dotenv(basedir / ".env")
 
 
 class Settings(BaseSettings):
