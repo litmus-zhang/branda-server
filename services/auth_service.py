@@ -1,9 +1,8 @@
 from fastapi.responses import JSONResponse
 from fastapi import HTTPException, status
 import passlib.hash
-from config.database import get_db
 from models.schemas import UserInput, UserRegister
-from fastapi import Request, HTTPException, Depends
+from fastapi import Request, HTTPException
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from sqlalchemy.orm import Session
 from models import models

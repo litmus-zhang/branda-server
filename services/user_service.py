@@ -1,9 +1,10 @@
 from typing import Tuple
-from fastapi import HTTPException
-from fastapi.responses import JSONResponse
+
 import passlib
-from sqlalchemy.orm import Session
+from fastapi import HTTPException
 from fastapi.encoders import jsonable_encoder
+from fastapi.responses import JSONResponse
+from sqlalchemy.orm import Session
 
 from models import models
 from models.schemas import UserUpdate
