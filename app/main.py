@@ -9,10 +9,16 @@ models.Base.metadata.create_all(bind=engine)
 load_dotenv()
 app = FastAPI()
 app.include_router(router, prefix="/api/v1")
-origin = ["*"]
+origin = [
+    "http://localhost:3000",
+    "http://localhost:8000",
+    "https://branda.vercel.app",
+    "https://branda-admin.vercel.app",
+]
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origin,
     allow_credentials=True,
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
