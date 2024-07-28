@@ -1,5 +1,5 @@
-from typing import Annotated
-from fastapi import APIRouter, HTTPException, Depends
+from typing import Annotated, Optional
+from fastapi import APIRouter, HTTPException, Depends, Query
 from fastapi.responses import JSONResponse
 from config.database import get_db
 from models.schemas import BaseBody, Base, Strategy, User
@@ -31,8 +31,11 @@ async def create_font(base: BaseBody, brandId: str, db: Session = Depends(get_db
 
 
 @brand_router.get("/color")
-async def get_color_pallete(base: Base):
+async def get_color_pallete(
+    niche: Optional[str] = Query(None), industry: Optional[str] = Query(None)
+):
     try:
+        base = Base(niche=niche, industry=industry)
         data = brand_service.get_color_pallete(base)
         return JSONResponse(
             content={"message": "Color pallete received successfully", "data": data}
@@ -49,8 +52,11 @@ async def create_color_pallete(
 
 
 @brand_router.get("/messaging")
-def get_brand_messaging(base: Base):
+def get_brand_messaging(
+    niche: Optional[str] = Query(None), industry: Optional[str] = Query(None)
+):
     try:
+        base = Base(niche=niche, industry=industry)
 
         data = brand_service.get_brand_messaging(base)
         return JSONResponse(
@@ -66,8 +72,13 @@ def create_brand_messaging(base: BaseBody, brandId: str, db: Session = Depends(g
 
 
 @brand_router.get("/strategy")
-def get_brand_strategy(brand_strategy: Strategy):
+def get_brand_strategy(
+    niche: Optional[str] = Query(None),
+    industry: Optional[str] = Query(None),
+    country: Optional[str] = Query("Nigeria", alias="country"),
+):
     try:
+        brand_strategy = Strategy(niche=niche, industry=industry, country=country)
         data = brand_service.get_brand_strategy(brand_strategy)
         return JSONResponse(
             content={"message": "Brand strategy received successfully", "data": data}
@@ -84,8 +95,11 @@ def create_brand_strategy(
 
 
 @brand_router.get("/brand_name")
-def get_brand_name(base: Base):
+def get_brand_name(
+    niche: Optional[str] = Query(None), industry: Optional[str] = Query(None)
+):
     try:
+        base = Base(niche=niche, industry=industry)
         data = brand_service.get_brand_name(base)
         return JSONResponse(
             content={"message": "Brand names fetched successfully", "data": data}
@@ -105,8 +119,9 @@ def post_brand_name(
 
 
 @brand_router.get("/logo")
-def get_logo(base: Base):
+def get_logo(niche: Optional[str] = Query(None), industry: Optional[str] = Query(None)):
     try:
+        base = Base(niche=niche, industry=industry)
         return brand_service.get_logo(base)
 
     except Exception as exc:
@@ -119,8 +134,11 @@ def create_logo(base: BaseBody, brandId: str, db: Session = Depends(get_db)):
 
 
 @brand_router.get("/photography")
-def get_photography(base: Base):
+def get_photography(
+    niche: Optional[str] = Query(None), industry: Optional[str] = Query(None)
+):
     try:
+        base = Base(niche=niche, industry=industry)
         return brand_service.get_photography(base)
     except Exception as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
@@ -132,8 +150,11 @@ def create_photography(base: BaseBody, brandId: str, db: Session = Depends(get_d
 
 
 @brand_router.get("/illustration")
-def get_illustration(base: Base):
+def get_illustration(
+    niche: Optional[str] = Query(None), industry: Optional[str] = Query(None)
+):
     try:
+        base = Base(niche=niche, industry=industry)
         return brand_service.get_illustration(base)
     except Exception as exc:
         raise HTTPException(status_code=404, detail=str(exc)) from exc
