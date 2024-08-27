@@ -22,6 +22,7 @@ pydantic-settings = "^2.3.4"
 pyjwt = "2.8.0"
 python-decouple = "3.8"
 psycopg2 = "^2.9.9"
+sqlalchemy-cockroachdb = "^2.0.2"
 
 
 [tool.poetry.group.dev.dependencies]

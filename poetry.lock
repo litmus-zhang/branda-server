@@ -2831,6 +2831,20 @@ pymysql = ["pymysql"]
 sqlcipher = ["sqlcipher3_binary"]
 
 [[package]]
+name = "sqlalchemy-cockroachdb"
+version = "2.0.2"
+description = "CockroachDB dialect for SQLAlchemy"
+optional = false
+python-versions = "*"
+files = [
+    {file = "sqlalchemy-cockroachdb-2.0.2.tar.gz", hash = "sha256:119756eb905855d6a11345b99cfe853031a3fe598a9c4bf35a8ddac9f89fe8cc"},
+    {file = "sqlalchemy_cockroachdb-2.0.2-py3-none-any.whl", hash = "sha256:0d5d50e805b024cb2ccd85423a5c1a367d1a56a5cd0ea47765233fd47665070d"},
+]
+
+[package.dependencies]
+SQLAlchemy = "*"
+
+[[package]]
 name = "starlette"
 version = "0.37.2"
 description = "The little ASGI library that shines."
@@ -3490,4 +3504,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.12"
-content-hash = "9125128804f7f473097813fa93f8f32230b5b3d27b50d2bf0064c95d09c93c34"
+content-hash = "c201454ab2dd0fe5472741ecdf73769f00a5c00380f53cc37dc268c5a7597380"
